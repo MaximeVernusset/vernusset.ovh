@@ -1,0 +1,14 @@
+{
+	"admin": {
+		"hashedPassword": "9c6976e5b5410425bde908bd4def15dfb167a9c883fc4bb8a81f6f2ab448a919",
+		"authorities": ["admin"]
+	},
+	"pyload": {
+		"hashedPassword": "8c6976e5b5411422bde908bd4dee15dfb167a9c883fc3bb8a81f6d2ab448a917",
+		"authorities": ["pyload"]
+	},
+	"test": {
+		"hashedPassword": "8f86d081884d7d659a2feaa0c55ad115a3bf4f1b2b0c822cd15d6c15b0f00a09",
+		"authorities": ["test"]
+	}
+}
