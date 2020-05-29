@@ -14,7 +14,7 @@ function authenticate($user , $password) {
 	if (isset($users[$user]) && $users[$user][HASHED_PASSWORD] == hash(HASH_ALGO, $password)) {
 		$_SESSION[USER] = $user;
 		$_SESSION[IS_CONNECTED] = true;
-		$_SESSION[STAY_CONNECTED] = isset($_POST[STAY_CONNECTED]) && $_POST[STAY_CONNECTED];
+		$_SESSION[STAY_CONNECTED] = isset($_POST[STAY_CONNECTED]) && $_POST[STAY_CONNECTED] === 'true';
 		$_SESSION[AUTHORITIES] = $users[$user][AUTHORITIES];
 		$_SESSION[LAST_LOGIN] = time();
 		return true;

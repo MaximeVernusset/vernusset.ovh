@@ -33,10 +33,29 @@
 </div>
 
 <script>
-    function login(event) {
+    async function login(event) {
         event.preventDefault();
-        $.post('api/login/', $('#login-form').serialize())
-            .done(() => location.reload())
-            .fail(() => $('#<?=PASSWORD?>').addClass('is-invalid'));
+        const formData = new FormData();
+		formData.append('<?=USER?>', $('#<?=USER?>').val());
+		formData.append('<?=PASSWORD?>', await sha256($('#<?=PASSWORD?>').val()));
+        formData.append('<?=STAY_CONNECTED?>', $('#<?=STAY_CONNECTED?>').is(':checked'));
+        fetch('api/login/', {
+					method: 'POST',
+					body: formData
+		}).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                $('#<?=PASSWORD?>').addClass('is-invalid')
+            }
+        });
+    }
+
+    async function sha256(message) {
+        const msgBuffer = new TextEncoder('utf-8').encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+        return hashHex;
     }
 </script>
