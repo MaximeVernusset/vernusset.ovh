@@ -20,7 +20,7 @@
 							</div>
                         </div>
                         <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
-							<input type="submit" class="btn btn-primary form-control" value="Log in" onclick="login(event)">
+							<input type="submit" id="submitButton" class="btn btn-primary w-100" value="Log in" onclick="login(event)">
 						</div>
                     </form>
                 </div>
@@ -40,13 +40,13 @@
 		formData.append('<?=PASSWORD?>', await sha256($('#<?=PASSWORD?>').val()));
         formData.append('<?=STAY_CONNECTED?>', $('#<?=STAY_CONNECTED?>').is(':checked'));
         fetch('api/login/', {
-					method: 'POST',
-					body: formData
+			method: 'POST',
+			body: formData
 		}).then(response => {
             if (response.ok) {
                 location.reload();
             } else {
-                $('#<?=PASSWORD?>').addClass('is-invalid')
+                $('#<?=PASSWORD?>').addClass('is-invalid');
             }
         });
     }

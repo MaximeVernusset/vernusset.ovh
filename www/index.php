@@ -2,6 +2,7 @@
 require_once __DIR__.'/util.php';
 
 session_start();
+http_response_code(HTTP_OK);
 
 $controller = CONTROLLER_DIR.'home.c.php';
 

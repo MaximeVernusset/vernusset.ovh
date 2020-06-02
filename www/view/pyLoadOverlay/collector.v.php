@@ -1,24 +1,38 @@
-<div class="row h-25">
-    <div class="container-fluid">
-        <div class="row">
-            <h1>Collector view</h1>
-        </div>
-        <div class="row">
-            <em class="text-warning">(<i class='fas fa-tools'></i> under construction <i class='fas fa-hammer'></i>)</em>
-        </div>
-        <div class="row">
-            <h2>Features to implement</h2>
-        </div>
-        <div class="row">
-            <ul>
-                <li>Post list of Uptobox links to download</li>
-                <li>...</li>
-            </ul>
-        </div>
-    </div>
+<div class="row">
+    <h1>Collector</h1>
 </div>
-<div class="row h-50">
-    <div class="col-md-6 offset-md-3 my-auto text-center">
-        <i class="fas fa-folder-plus display-3 text-warning"></i>
-    </div>
+<div class="row">
+    <form id="collector-form" class="w-100">
+        <div class="form-group">
+            <textarea id="<?=LINKS?>" class="form-control" name="<?=LINKS?>" placeholder="<?=LINKS?>" rows="<?=count($links)?>" autofocus><?=join(PHP_EOL, $links)?></textarea>
+            <small class="form-text text-muted">List of download links (<code>http(s)://...</code>)</small>
+        </div>
+        <input type="submit" id="submitButton" class="btn btn-primary" value="Submit" onclick="postLinks(event)">
+    </form>
 </div>
+<div class="row">
+    <p id="toast" class="text-muted"></p>
+</div>
+
+<script>
+    function postLinks(event) {
+        event.preventDefault();
+        const submitButton = $('#submitButton');
+        $.post('api/pyLoadOverlay/collect/', $('#collector-form').serialize(), 'json')
+            .fail((response) => {
+                const toastSection = $('#toast');
+                toastSection.text(response.statusText);
+                submitButton.addClass('btn-danger');
+                setTimeout(() => {
+                    submitButton.removeClass('btn-danger');
+                    toastSection.empty();
+                }, 2500);
+            })
+            .done((response) => {
+                submitButton.addClass('btn-success');
+                setTimeout(() => {
+                    document.location = 'index.php?action=pyload/monitor';
+                }, 750);
+            });
+    }
+</script>

@@ -8,11 +8,14 @@ define('CONTROLLER_DIR', __DIR__.'/controller/');
 define('DEFAULT_PAGE', 'index.php');
 define('HASH_ALGO', 'sha256');
 define('HASHED_PASSWORD', 'hashedPassword');
+define('HTTP_BAD_REQUEST', 400);
 define('HTTP_FORBIDDEN', 403);
+define('HTTP_INTERNAL_ERROR', 500);
 define('HTTP_NOT_FOUND', 404);
 define('HTTP_OK', 200);
 define('IS_CONNECTED', 'isConnected');
 define('LAST_LOGIN', 'lastLogin');
+define('LINKS', 'links');
 define('LOCATION_HEADER', 'location: ');
 define('PASSWORD', 'password');
 define('PYLOAD', 'pyload');
@@ -23,6 +26,8 @@ define('STAY_CONNECTED', 'stayConnected');
 define('USER', 'user');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
+
+http_response_code(HTTP_NOT_FOUND);
 
 function loadConfig() {
 	$config = null;
@@ -86,7 +91,7 @@ function getConfig($name) {
 function hasAuthorities($authorities) {
 	$hasAuthorities = isset($_SESSION[AUTHORITIES]);
 	if ($hasAuthorities && !in_array(ADMIN, $_SESSION[AUTHORITIES])) {
-		foreach($authorities as $authority) {
+		foreach ($authorities as $authority) {
 			$hasAuthorities &= in_array($authority, $_SESSION[AUTHORITIES]);
 		}
 	}
