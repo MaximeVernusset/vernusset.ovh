@@ -18,7 +18,7 @@
     function postLinks(event) {
         event.preventDefault();
         const submitButton = $('#submitButton');
-        $.post('api/pyLoadOverlay/collect/', $('#collector-form').serialize(), 'json')
+        $.post('api/pyLoadOverlay/collect/', $('#collector-form').serialize(), null, 'json')
             .fail((response) => {
                 const toastSection = $('#toast');
                 toastSection.text(response.statusText);

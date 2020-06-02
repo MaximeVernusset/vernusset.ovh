@@ -9,7 +9,7 @@ if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
 	$response[MESSAGE] = 'invalid given links';
 	if (isset($_POST[LINKS])) {
 		$links = parseAndSanitizeInputLinks($_POST[LINKS]);
-		$response[DATA]['links'] = $links;
+		$response[DATA][LINKS] = $links;
 		if (count($links) > 0) {
 			http_response_code(HTTP_OK);
 			$packageIds = json_decode(postDownloadLinks($links));
@@ -27,7 +27,7 @@ function parseAndSanitizeInputLinks($links) {
 	$links = preg_split(SPLIT_REGEX, $links);
 	foreach ($links as $link) {
 		$sanitizedLink = filter_var(htmlentities($link), FILTER_VALIDATE_URL);
-		if ($sanitizedLink !== '' && $sanitizedLink !== false) {
+		if (!empty($sanitizedLink)) {
 			$sanitized[] = $sanitizedLink;
 		}
 	}

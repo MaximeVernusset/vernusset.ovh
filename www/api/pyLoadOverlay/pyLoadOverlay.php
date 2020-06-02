@@ -3,6 +3,7 @@ require_once __DIR__.'/../api.php';
 
 define('PYLOAD_CONFIG','pyLoadConfig');
 define('PYLOAD_SESSION','pyLoadSession');
+define('SESSION','session');
 define('SPLIT_REGEX', '/(\r\n)|\r|\n/');
 define('URL', 'url');
 define('USERNAME', 'username');
@@ -29,14 +30,14 @@ function loginPyLoad() {
 		PASSWORD => getPyLoadConfig(PASSWORD)
 	));
 	$_SESSION[PYLOAD_SESSION] = json_decode($sessionId);
-	return $sessionId !== 'false';
+	return !filter_var($sessionId, FILTER_VALIDATE_BOOLEAN);
 }
 
 function postDownloadLinks($links) {
 	if (loginPyLoad()) {
 		return httpPost(getPyLoadConfig(URL).'/api/generateAndAddPackages', array(
 			LINKS => json_encode($links, JSON_UNESCAPED_SLASHES),
-			'session' => $_SESSION[PYLOAD_SESSION]
+			SESSION => $_SESSION[PYLOAD_SESSION]
 		));
 	} else {
 		http_response_code(HTTP_INTERNAL_ERROR);
