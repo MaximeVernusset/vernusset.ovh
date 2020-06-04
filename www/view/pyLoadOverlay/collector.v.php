@@ -2,6 +2,9 @@
     <h1>Collector</h1>
 </div>
 <div class="row">
+    <h2><?=$linksName?></h2>
+</div>
+<div class="row">
     <form id="collector-form" class="w-100">
         <div class="form-group">
             <textarea id="<?=LINKS?>" class="form-control" name="<?=LINKS?>" placeholder="<?=LINKS?>" rows="<?=count($links)?>" autofocus><?=join(PHP_EOL, $links)?></textarea>
@@ -32,7 +35,7 @@
                 submitButton.addClass('btn-success');
                 setTimeout(() => {
                     document.location = 'index.php?action=pyload/monitor';
-                }, 750);
+                }, 500);
             });
     }
 </script>

@@ -3,7 +3,7 @@ require_once __DIR__.'/../api.php';
 
 session_start();
 
-if (isset($_POST[USER]) && isset($_POST[PASSWORD]) && authenticate($_POST[USER], $_POST[PASSWORD])) {
+if (isset($_POST[USER]) && isset($_POST[PASSWORD]) && authenticate(htmlentities($_POST[USER]), htmlentities($_POST[PASSWORD]))) {
 	http_response_code(HTTP_OK);
 	$response[MESSAGE] = 'logged in';
 	$response[DATA][USER] = $_SESSION[USER];

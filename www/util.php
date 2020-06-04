@@ -6,6 +6,7 @@ define('CONFIG','config');
 define('CONFIG_DIR', __DIR__.'/../config/');
 define('CONTROLLER_DIR', __DIR__.'/controller/');
 define('DEFAULT_PAGE', 'index.php');
+define('GENERAL_CONFIG_FILE','config.json');
 define('HASH_ALGO', 'sha256');
 define('HASHED_PASSWORD', 'hashedPassword');
 define('HTTP_BAD_REQUEST', 400);
@@ -17,25 +18,31 @@ define('IS_CONNECTED', 'isConnected');
 define('LAST_LOGIN', 'lastLogin');
 define('LINKS', 'links');
 define('LOCATION_HEADER', 'location: ');
+define('NAME', 'name');
 define('PASSWORD', 'password');
 define('PYLOAD', 'pyload');
+define('PYLOAD_CONFIG_FILE','pyLoad.json');
 define('REDIRECT_URL', 'redirectUrl');
 define('REQUESTED_URL', $_SERVER['REQUEST_URI']);
 define('SESSION_TIMEOUT', 'sessionTimeOut');
 define('STAY_CONNECTED', 'stayConnected');
+define('URL', 'url');
 define('USER', 'user');
+define('USERS_FILE', 'users.json');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
 http_response_code(HTTP_NOT_FOUND);
 
-function loadConfig() {
+function loadConfig($configFile) {
 	$config = null;
-	if (isset($_SESSION[CONFIG])) {
-		$config = $_SESSION[CONFIG];
-	} else {
-		$config = json_decode(file_get_contents(CONFIG_DIR.'config.json'), true);
-		$_SESSION[CONFIG] = $config;
+	if ($configFile !== USERS_FILE) {
+		if (isset($_SESSION[$configFile])) {
+			$config = $_SESSION[$configFile];
+		} else {
+			$config = json_decode(file_get_contents(CONFIG_DIR.$configFile), true);
+			$_SESSION[$configFile] = $config;
+		}
 	}
 	return $config;
 }
@@ -80,11 +87,11 @@ function deconnectIfNeeded() {
 }
 
 function loadUsers() {
-	return json_decode(file_get_contents(CONFIG_DIR.'users.json'), true);
+	return json_decode(file_get_contents(CONFIG_DIR.USERS_FILE), true);
 }
 
-function getConfig($name) {
-	$config = loadConfig();
+function getConfig($name, $configFile = GENERAL_CONFIG_FILE) {
+	$config = loadConfig($configFile);
 	return isset($config[$name]) ? $config[$name] : null;
 }
 

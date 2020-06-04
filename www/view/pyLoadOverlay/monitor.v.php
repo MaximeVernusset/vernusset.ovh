@@ -15,9 +15,12 @@
                 <li>See current download(s)</li>
                 <li>See download speed</li>
                 <li>Configure/enable download speed limit</li>
-                <li>Order ownload queue</li>
+                <li>Order download queue</li>
                 <li>...</li>
             </ul>
+        </div>
+        <div class="row">
+            <h3><a href="<?=getConfig(URL, PYLOAD_CONFIG_FILE)?>">pyLoad interface</h3>
         </div>
     </div>
 </div>

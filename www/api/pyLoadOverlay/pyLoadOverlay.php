@@ -1,27 +1,13 @@
 <?php
 require_once __DIR__.'/../api.php';
 
-define('PYLOAD_CONFIG','pyLoadConfig');
 define('PYLOAD_SESSION','pyLoadSession');
 define('SESSION','session');
 define('SPLIT_REGEX', '/(\r\n)|\r|\n/');
-define('URL', 'url');
 define('USERNAME', 'username');
 
-function loadPyLoadConfig() {
-	$config = null;
-	if (isset($_SESSION[PYLOAD_CONFIG])) {
-		$config = $_SESSION[PYLOAD_CONFIG];
-	} else {
-		$config = json_decode(file_get_contents(CONFIG_DIR.'pyload.json'), true);
-		$_SESSION[PYLOAD_CONFIG] = $config;
-	}
-	return $config;
-}
-
 function getPyLoadConfig($name) {
-	$config = loadPyLoadConfig();
-	return isset($config[$name]) ? $config[$name] : null;
+	return getConfig($name, PYLOAD_CONFIG_FILE);
 }
 
 function loginPyLoad() {
