@@ -21,7 +21,7 @@ define('LOCATION_HEADER', 'location: ');
 define('NAME', 'name');
 define('PASSWORD', 'password');
 define('PYLOAD', 'pyload');
-define('PYLOAD_CONFIG_FILE','pyLoad.json');
+define('PYLOAD_CONFIG_FILE','pyload.json');
 define('REDIRECT_URL', 'redirectUrl');
 define('REQUESTED_URL', $_SERVER['REQUEST_URI']);
 define('SESSION_TIMEOUT', 'sessionTimeOut');
