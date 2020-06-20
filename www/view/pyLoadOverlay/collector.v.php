@@ -2,15 +2,16 @@
     <h1>Collector</h1>
 </div>
 <div class="row">
-    <h2><?=$linksName?></h2>
-</div>
-<div class="row">
     <form id="collector-form" class="w-100">
         <div class="form-group">
-            <textarea id="<?=LINKS?>" class="form-control" name="<?=LINKS?>" placeholder="<?=LINKS?>" rows="<?=count($links)?>" autofocus><?=join(PHP_EOL, $links)?></textarea>
+            <input id="<?=PACKAGE_NAME?>" class="form-control" name="<?=PACKAGE_NAME?>" placeholder="Package name" value="<?=$packageName?>">
+        </div>
+        <div class="form-group">
+            <textarea id="<?=LINKS?>" class="form-control" name="<?=LINKS?>" placeholder="Links" rows="<?=count($links)?>" autofocus><?=join(PHP_EOL, $links)?></textarea>
             <small class="form-text text-muted">List of download links (<code>http(s)://...</code>)</small>
         </div>
         <input type="submit" id="submitButton" class="btn btn-primary" value="Submit" onclick="postLinks(event)">
+        <input type="button" id="saveLinksLocally" class="btn btn-info" value="Save locally" onclick="saveLinksToLocalStorage()">
     </form>
 </div>
 <div class="row">
@@ -37,5 +38,9 @@
                     document.location = 'index.php?action=pyload/monitor';
                 }, 500);
             });
+    }
+
+    function saveLinksToLocalStorage() {
+        // TODO
     }
 </script>

@@ -16,6 +16,7 @@
                 <li>See download speed</li>
                 <li>Configure/enable download speed limit</li>
                 <li>Order download queue</li>
+                <li>Delete finished packages</li>
                 <li>...</li>
             </ul>
         </div>

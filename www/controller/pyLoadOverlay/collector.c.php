@@ -7,7 +7,7 @@ $view = VIEW_DIR.'pyLoadOverlay/collector.v.php';
 if (!hasAuthorities([PYLOAD])) {
 	httpCode(HTTP_FORBIDDEN, $title, $view);
 } else {
-	$linksName = isset($_GET[NAME]) ? htmlentities($_GET[NAME]) : '';
+	$packageName = isset($_GET[PACKAGE_NAME]) ? htmlentities($_GET[PACKAGE_NAME]) : '';
 	$links = array();
 	if (isset($_GET[LINKS])) {
 		if ($linksTmp = json_decode($_GET[LINKS])) {

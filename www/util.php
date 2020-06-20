@@ -16,9 +16,10 @@ define('HTTP_NOT_FOUND', 404);
 define('HTTP_OK', 200);
 define('IS_CONNECTED', 'isConnected');
 define('LAST_LOGIN', 'lastLogin');
+define('LAST_REQUEST', 'lastRequest');
 define('LINKS', 'links');
 define('LOCATION_HEADER', 'location: ');
-define('NAME', 'name');
+define('PACKAGE_NAME', 'packageName');
 define('PASSWORD', 'password');
 define('PYLOAD', 'pyload');
 define('PYLOAD_CONFIG_FILE','pyload.json');
@@ -64,10 +65,17 @@ function checkIsConnected() {
 }
 
 function sessionTimedOut() {
+	$now = time();
+	$timedOut = true;
+	$timeout = getConfig(SESSION_TIMEOUT) * 60;
 	if (isset($_SESSION[LAST_LOGIN])) {
-		return $_SESSION[LAST_LOGIN] + getConfig(SESSION_TIMEOUT) * 60 < time();
+		$timedOut = $_SESSION[LAST_LOGIN] + $timeout < $now;
+		if (isset($_SESSION[LAST_REQUEST])) {
+			$timedOut &= $_SESSION[LAST_REQUEST] + $timeout < $now;
+		}
 	}
-	return true;
+	$_SESSION[LAST_REQUEST] = $now;
+	return $timedOut;
 }
 
 function checkSessionValidity() {
