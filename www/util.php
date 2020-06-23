@@ -19,7 +19,7 @@ define('LAST_LOGIN', 'lastLogin');
 define('LAST_REQUEST', 'lastRequest');
 define('LINKS', 'links');
 define('LOCATION_HEADER', 'location: ');
-define('PACKAGE_NAME', 'packageName');
+define('PACKAGE_NAME', 'name');
 define('PASSWORD', 'password');
 define('PYLOAD', 'pyload');
 define('PYLOAD_CONFIG_FILE','pyload.json');

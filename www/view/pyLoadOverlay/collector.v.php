@@ -11,7 +11,6 @@
             <small class="form-text text-muted">List of download links (<code>http(s)://...</code>)</small>
         </div>
         <input type="submit" id="submitButton" class="btn btn-primary" value="Submit" onclick="postLinks(event)">
-        <input type="button" id="saveLinksLocally" class="btn btn-info" value="Save locally" onclick="saveLinksToLocalStorage()">
     </form>
 </div>
 <div class="row">
@@ -38,9 +37,5 @@
                     document.location = 'index.php?action=pyload/monitor';
                 }, 500);
             });
-    }
-
-    function saveLinksToLocalStorage() {
-        // TODO
     }
 </script>

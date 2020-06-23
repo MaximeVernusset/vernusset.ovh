@@ -1,7 +1,7 @@
 # vernusset.ovh
 
 Personnal website, for convenient use, home automation, and future needs.  
-Based on SB Admin 2 (Boostrap template), it relies on a MVC architecture mixed with homemade frontend app, with the use of APIs.
+Based on [SB Admin 2](https://github.com/StartBootstrap/startbootstrap-sb-admin-2) Boostrap template, it relies on a MVC architecture mixed with homemade frontend app, with the use of APIs.
 
 ## Used technologies
 
