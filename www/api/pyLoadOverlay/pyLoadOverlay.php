@@ -1,13 +1,13 @@
 <?php
 require_once __DIR__.'/../api.php';
 
-define('API_ADD_FILES_TO_PACKAGE','addFiles');
-define('API_ADD_PACKAGE_WITH_NAME','addPackage');
-define('API_ADD_PACKAGE_WITHOUT_NAME','generateAndAddPackages');
-define('NAME','name');
-define('PACKAGE_ID','pid');
-define('PYLOAD_SESSION','pyLoadSession');
-define('SESSION','session');
+define('API_ADD_FILES_TO_PACKAGE', 'addFiles');
+define('API_ADD_PACKAGE_WITH_NAME', 'addPackage');
+define('API_ADD_PACKAGE_WITHOUT_NAME', 'generateAndAddPackages');
+define('NAME', 'name');
+define('PACKAGE_ID', 'pid');
+define('PYLOAD_SESSION', 'pyLoadSession');
+define('SESSION', 'session');
 define('SPLIT_REGEX', '/(\r\n)|\r|\n/');
 define('USERNAME', 'username');
 

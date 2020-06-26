@@ -4,7 +4,7 @@
             <h1>Monitor view</h1>
         </div>
         <div class="row">
-            <em class="text-warning">(<i class='fas fa-tools'></i> under construction <i class='fas fa-hammer'></i>)</em>
+            <em class="text-warning">(<i class="fas fa-tools" aria-hidden="true"></i> under construction <i class="fas fa-hammer" aria-hidden="true"></i>)</em>
         </div>
         <div class="row">
             <h2>Features to implement</h2>
@@ -21,12 +21,12 @@
             </ul>
         </div>
         <div class="row">
-            <h3><a href="<?=getConfig(URL, PYLOAD_CONFIG_FILE)?>">pyLoad interface</h3>
+            <h3><a href="<?=getConfig(URL, PYLOAD_CONFIG_FILE)?>">pyLoad interface</a></h3>
         </div>
     </div>
 </div>
 <div class="row h-50">
     <div class="col-md-6 offset-md-3 my-auto text-center">
-        <i class="fas fa-tachometer-alt display-3 text-warning"></i>
+        <i class="fas fa-tachometer-alt display-3 text-warning" aria-hidden="true"></i>
     </div>
 </div>

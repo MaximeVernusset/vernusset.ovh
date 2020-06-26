@@ -4,7 +4,7 @@
             <h1>Home</h1>
         </div>
         <div class="row">
-            <em class="text-warning">(<i class='fas fa-hammer'></i> under construction <i class='fas fa-hammer'></i>)</em>
+            <em class="text-warning">(<i class="fas fa-hammer" aria-hidden="true"></i> under construction <i class="fas fa-hammer" aria-hidden="true"></i>)</em>
         </div>
         <div class="row">
             <h2>TODO</h2>
