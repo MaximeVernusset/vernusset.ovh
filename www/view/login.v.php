@@ -1,4 +1,4 @@
-<div class="container">
+<div id="login-section" class="container">
     <div class="row justify-content-center">
         <div class="col-lg-5">
             <div class="card shadow-lg border-0 rounded-lg mt-5">
@@ -16,7 +16,7 @@
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
 								<input type="checkbox" class="form-check-input" id="<?=STAY_CONNECTED?>" name="<?=STAY_CONNECTED?>" checked>
-								<label class="form-check-label" for="<?=STAY_CONNECTED?>">Stay connected <small>(for <?=getConfig(SESSION_TIMEOUT)?> minutes)</small></label>
+								<label class="form-check-label" for="<?=STAY_CONNECTED?>">Stay connected <small>(for <?=formatSessionTimeout()?>)</small></label>
 							</div>
                         </div>
                         <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
