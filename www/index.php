@@ -11,9 +11,6 @@ if (isset($_GET[ACTION])) {
 	case 'login':
 		$controller = CONTROLLER_DIR.'login.c.php';
 		break;
-	case 'logout':
-		$controller = CONTROLLER_DIR.'logout.c.php';
-		break;
 	case 'pyload/collect':
 		$controller = CONTROLLER_DIR.'pyLoadOverlay/collector.c.php';
 		break;
