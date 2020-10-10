@@ -13,12 +13,12 @@ if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
 		if (count($links) > 0) {
 			http_response_code(HTTP_OK);
 			$packageName = isset($_POST[PACKAGE_NAME]) ? htmlentities($_POST[PACKAGE_NAME]) : null;
-			$packageIds = json_decode(postDownloadLinks($links, $packageName));
+			$packageIds = postDownloadLinks($links, $packageName);
 			if (!is_array($packageIds) && $packageIds != false) {
 				$packageIds = array($packageIds);
 			}
 			$response[MESSAGE] = 'links collected';
-			$response[DATA]['packageIds'] = $packageIds;
+			$response[DATA][PACKAGES_IDS] = $packageIds;
 		}
 	}
 }
