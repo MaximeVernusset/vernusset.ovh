@@ -10,12 +10,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<meta name="description" content="vernusset.ovh"/>
         <link rel="icon" type="image/png" href="public/img/favicon.png" />
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="public/vendor/bootstrap/4.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="public/css/styles.css"/>
         <link rel="stylesheet" href="public/css/override.css"/>
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="public/vendor/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+        <script src="public/vendor/font-awesome/5.11.2/js/all.min.js"></script>
+        <script src="public/vendor/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">

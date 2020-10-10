@@ -22,7 +22,7 @@
 })(jQuery);
 
 function logout() {
-    $.post('api/logout/', $('#login-form').serialize(), null, 'json')
+    $.post('api/logout/')
         .done(() => window.location = 'index.php')
         .fail(() => console.log('Failed to logout'));
 }

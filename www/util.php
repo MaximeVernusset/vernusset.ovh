@@ -33,6 +33,7 @@ define('USERS_FILE', 'users.json');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
+ini_set('session.cookie_httponly', 1);
 http_response_code(HTTP_NOT_FOUND);
 
 function loadConfig($configFile) {
