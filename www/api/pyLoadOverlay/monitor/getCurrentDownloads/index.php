@@ -3,11 +3,8 @@ require_once __DIR__.'/../monitor.php';
 
 if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
 	http_response_code(HTTP_OK);
-	if (startDownload()) {
-		$response[MESSAGE] = 'downloading';
-	} else {
-		$response[MESSAGE] = 'not downloading';
-	}
+	$response[MESSAGE] = 'current downloads';
+	$response[DATA]['currentDownloads'] = getCurrentDownloads();
 }
 
 echo json_encode($response);

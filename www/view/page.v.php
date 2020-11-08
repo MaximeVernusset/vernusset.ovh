@@ -31,7 +31,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <!--<a class="dropdown-item" href="#">Settings</a>
                         <div class="dropdown-divider"></div>-->
-                        <button class="dropdown-item" onclick="logout()">Logout</button>
+                        <button class="dropdown-item" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i>&nbsp;Logout</button>
                     </div>
                 </li>
             </ul>

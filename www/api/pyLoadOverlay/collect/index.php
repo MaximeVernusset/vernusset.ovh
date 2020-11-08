@@ -1,9 +1,6 @@
 <?php
 require_once __DIR__.'/../pyLoadOverlay.php';
 
-session_start();
-http_response_code(HTTP_FORBIDDEN);
-
 if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
 	http_response_code(HTTP_BAD_REQUEST);
 	$response[MESSAGE] = 'invalid given links';
