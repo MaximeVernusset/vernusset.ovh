@@ -21,8 +21,17 @@
     });
 })(jQuery);
 
+
+function callApi(method, apiPath, params = {}) {
+    switch(method) {
+        case 'GET': return $.get(apiPath, params);
+        case 'POST': return $.post(apiPath, params);
+        default: return $.get(apiPath, params);
+    }
+}
+
 function logout() {
-    $.post('api/logout/')
+    callApi('POST', 'api/logout/')
         .done(() => window.location = 'index.php')
         .fail(() => console.log('Failed to logout'));
 }

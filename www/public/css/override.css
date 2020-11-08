@@ -1,0 +1,7 @@
+#pyLoadOverlay-monitor-section .remove-col-padding {
+    padding: 0;
+}
+
+#pyLoadOverlay-monitor-section #speed-limit {
+    width: 80px;
+}

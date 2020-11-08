@@ -1,27 +1,50 @@
 <?php
 require_once __DIR__.'/../api.php';
 
-define('API_ADD_FILES_TO_PACKAGE', 'addFiles');
-define('API_ADD_PACKAGE_WITH_NAME', 'addPackage');
-define('API_ADD_PACKAGE_WITHOUT_NAME', 'generateAndAddPackages');
+define('API_ADD_FILES_TO_PACKAGE', '/api/addFiles');
+define('API_ADD_PACKAGE_WITH_NAME', '/api/addPackage');
+define('API_ADD_PACKAGE_WITHOUT_NAME', '/api/generateAndAddPackages');
+define('API_CLEAN_QUEUE', '/api/deleteFinished');
+define('API_GET_CURRENT_DOWNLOADS', '/api/statusDownloads');
+define('API_GET_QUEUE', '/api/getQueue');
+define('API_GET_SERVER_STATUS', '/api/statusServer');
+define('API_LOGIN', '/api/login');
+define('API_PAUSE_DOWNLOAD', '/api/pauseServer');
+define('API_POST_CONFIG', '/json/save_config/general');
+define('API_START_DOWNLOAD', '/api/unpauseServer');
 define('NAME', 'name');
 define('PACKAGE_ID', 'pid');
+define('PACKAGES_IDS', 'packageIds');
+define('PARAM_LIMIT_SPEED', 'download|limit_speed');
+define('PARAM_SPEED_LIMIT', 'download|max_speed');
 define('PYLOAD_SESSION', 'pyLoadSession');
 define('SESSION', 'session');
 define('SPLIT_REGEX', '/(\r\n)|\r|\n/');
 define('USERNAME', 'username');
 
+session_start();
+http_response_code(HTTP_FORBIDDEN);
+
 function getPyLoadConfig($name) {
 	return getConfig($name, PYLOAD_CONFIG_FILE);
 }
 
+function internalError() {
+	http_response_code(HTTP_INTERNAL_ERROR);
+	return false;
+}
+
 function loginPyLoad() {
-	$sessionId = httpPost(getPyLoadConfig(URL).'/api/login', array(
-		USERNAME => getPyLoadConfig(USERNAME),
-		PASSWORD => getPyLoadConfig(PASSWORD)
-	));
-	$_SESSION[PYLOAD_SESSION] = json_decode($sessionId);
-	return !filter_var($sessionId, FILTER_VALIDATE_BOOLEAN);
+	if (isset($_SESSION[PYLOAD_SESSION])) {
+		return $_SESSION[PYLOAD_SESSION];
+	} else {
+		$sessionId = httpPost(getPyLoadConfig(URL).API_LOGIN, array(
+			USERNAME => getPyLoadConfig(USERNAME),
+			PASSWORD => getPyLoadConfig(PASSWORD)
+		));
+		$_SESSION[PYLOAD_SESSION] = json_decode($sessionId);
+		return !filter_var($sessionId, FILTER_VALIDATE_BOOLEAN);
+	}
 }
 
 function postDownloadLinks($links, $packageName = null) {
@@ -33,7 +56,7 @@ function postDownloadLinks($links, $packageName = null) {
 		);
 
 		if ($packageName != null) {
-			$downloadQueue = json_decode(httpPost($pyLoadUrl.'/api/getQueue', $formData), true);
+			$downloadQueue = json_decode(httpPost($pyLoadUrl.API_GET_QUEUE, $formData), true);
 			$existingPackageWithSameName = array_filter($downloadQueue, function($package) use ($packageName) {
 				return $package[NAME] == $packageName;
 			});
@@ -48,9 +71,62 @@ function postDownloadLinks($links, $packageName = null) {
 		}
 
 		$formData[LINKS] = json_encode($links, JSON_UNESCAPED_SLASHES);
-		return httpPost($pyLoadUrl.'/api/'.$apiToCall, $formData);
+		return json_decode(httpPost($pyLoadUrl.$apiToCall, $formData));
 	} else {
-		http_response_code(HTTP_INTERNAL_ERROR);
-		return false;
+		return internalError();
+	}
+}
+
+function simpleCommand($apiToCall) {
+	if (loginPyLoad()) {
+		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, array(SESSION => $_SESSION[PYLOAD_SESSION])));
+	} else {
+		return internalError();
+	}
+}
+
+function getServerStatus() {
+	return simpleCommand(API_GET_SERVER_STATUS);
+}
+
+function getCurrentDownloads() {
+	return simpleCommand(API_GET_CURRENT_DOWNLOADS);
+}
+
+function startDownload() {
+	return simpleCommand(API_START_DOWNLOAD);
+}
+
+function pauseDownload() {
+	return simpleCommand(API_PAUSE_DOWNLOAD);
+}
+
+function cleanQueue() {
+	return simpleCommand(API_CLEAN_QUEUE);
+}
+
+function limitSpeed($speedLimit) {
+	if (loginPyLoad()) {
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => getPyLoadConfig(URL).API_POST_CONFIG,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => HTTP_POST,
+			CURLOPT_POSTFIELDS => sprintf(PARAM_SPEED_LIMIT.'=%d&'.PARAM_LIMIT_SPEED.'=%s', $speedLimit, $speedLimit > 0 && !empty($speedLimit)),
+			CURLOPT_HTTPHEADER => array(
+				'Content-Type: application/x-www-form-urlencoded',
+				'Cookie: beaker.session.id='.$_SESSION[PYLOAD_SESSION]
+			),
+		));
+		$response = curl_exec($curl);
+		curl_close($curl);
+		return json_decode($response);
+	} else {
+		return internalError();
 	}
 }

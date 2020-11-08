@@ -1,4 +1,4 @@
-<div class="row h-25">
+<div id="home-section" class="row h-100">
     <div class="container-fluid">
         <div class="row">
             <h1>Home</h1>
@@ -14,10 +14,5 @@
                 <li>Display usefull info, or redirect to a certain page</li>
             </ul>
         </div>
-    </div>
-</div>
-<div class="row h-50">
-    <div class="col-md-6 offset-md-3 my-auto text-center">
-        <i class="fas fa-hammer fa-spin display-3 text-warning"></i>
     </div>
 </div>

@@ -2,6 +2,8 @@
 require_once __DIR__.'/../util.php';
 
 define('DATA', 'data');
+define('HTTP_GET', 'GET');
+define('HTTP_POST', 'POST');
 define('MESSAGE', 'message');
 
 header('Content-Type: application/json');
@@ -23,9 +25,9 @@ function httpRequest($method, $url, $data = []) {
 }
 
 function httpPost($url, $data = []) {
-	return httpRequest('POST', $url, $data);
+	return httpRequest(HTTP_POST, $url, $data);
 }
 
 function httpGet($url, $data = []) {
-	return httpRequest('GET', $url, $data);
+	return httpRequest(HTTP_GET, $url, $data);
 }
