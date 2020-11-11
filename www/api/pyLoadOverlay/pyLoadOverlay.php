@@ -7,6 +7,7 @@ define('API_ADD_PACKAGE_WITHOUT_NAME', '/api/generateAndAddPackages');
 define('API_CLEAN_QUEUE', '/api/deleteFinished');
 define('API_GET_CURRENT_DOWNLOADS', '/api/statusDownloads');
 define('API_GET_QUEUE', '/api/getQueue');
+define('API_GET_SERVER_CONFIG', '/api/getConfig');
 define('API_GET_SERVER_STATUS', '/api/statusServer');
 define('API_LOGIN', '/api/login');
 define('API_PAUSE_DOWNLOAD', '/api/pauseServer');
@@ -16,6 +17,7 @@ define('NAME', 'name');
 define('PACKAGE_ID', 'pid');
 define('PACKAGES_IDS', 'packageIds');
 define('PARAM_LIMIT_SPEED', 'download|limit_speed');
+define('PARAM_MAX_DOWNLOADS', 'download|max_downloads');
 define('PARAM_SPEED_LIMIT', 'download|max_speed');
 define('PYLOAD_SESSION', 'pyLoadSession');
 define('SESSION', 'session');
@@ -77,9 +79,35 @@ function postDownloadLinks($links, $packageName = null) {
 	}
 }
 
+function postPyLoadConfig($params) {
+	if (loginPyLoad()) {
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => getPyLoadConfig(URL).API_POST_CONFIG,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => HTTP_POST,
+			CURLOPT_POSTFIELDS => $params,
+			CURLOPT_HTTPHEADER => array(
+				'Content-Type: application/x-www-form-urlencoded',
+				'Cookie: beaker.session.id='.$_SESSION[PYLOAD_SESSION]
+			),
+		));
+		$response = curl_exec($curl);
+		curl_close($curl);
+		return json_decode($response);
+	} else {
+		return internalError();
+	}
+}
+
 function simpleCommand($apiToCall) {
 	if (loginPyLoad()) {
-		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, array(SESSION => $_SESSION[PYLOAD_SESSION])));
+		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, array(SESSION => $_SESSION[PYLOAD_SESSION])), true);
 	} else {
 		return internalError();
 	}
@@ -87,6 +115,10 @@ function simpleCommand($apiToCall) {
 
 function getServerStatus() {
 	return simpleCommand(API_GET_SERVER_STATUS);
+}
+
+function getPyloadServerConfig() {
+	return simpleCommand(API_GET_SERVER_CONFIG);
 }
 
 function getCurrentDownloads() {
@@ -105,28 +137,14 @@ function cleanQueue() {
 	return simpleCommand(API_CLEAN_QUEUE);
 }
 
+function getDownloadConfig() {
+	return getPyloadServerConfig()['download'];
+}
+
 function limitSpeed($speedLimit) {
-	if (loginPyLoad()) {
-		$curl = curl_init();
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => getPyLoadConfig(URL).API_POST_CONFIG,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => HTTP_POST,
-			CURLOPT_POSTFIELDS => sprintf(PARAM_SPEED_LIMIT.'=%d&'.PARAM_LIMIT_SPEED.'=%s', $speedLimit, $speedLimit > 0 && !empty($speedLimit)),
-			CURLOPT_HTTPHEADER => array(
-				'Content-Type: application/x-www-form-urlencoded',
-				'Cookie: beaker.session.id='.$_SESSION[PYLOAD_SESSION]
-			),
-		));
-		$response = curl_exec($curl);
-		curl_close($curl);
-		return json_decode($response);
-	} else {
-		return internalError();
-	}
+	return postPyLoadConfig(sprintf(PARAM_SPEED_LIMIT.'=%d&'.PARAM_LIMIT_SPEED.'=%s', $speedLimit, $speedLimit > 0));
+}
+
+function setMaxParallelDownloads($maxParallelDownloads) {
+	return postPyLoadConfig(sprintf(PARAM_MAX_DOWNLOADS.'=%d', $maxParallelDownloads));
 }

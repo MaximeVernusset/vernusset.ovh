@@ -42,7 +42,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
 <?php if (hasAuthorities([PYLOAD])) { ?>
-							<div class="sb-sidenav-menu-heading">pyLoad overload</div>
+							<div class="sb-sidenav-menu-heading">pyLoad overlay</div>
                             <a class="nav-link" href="index.php?action=pyload/monitor">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-tachometer-alt" aria-hidden="true"></i>

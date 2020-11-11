@@ -5,3 +5,7 @@
 #pyLoadOverlay-monitor-section #speed-limit {
     width: 80px;
 }
+
+#pyLoadOverlay-monitor-section #max-downloads {
+    width: 55px;
+}
