@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/../api.php';
 
+define('API_ABORT_DOWNLOAD', '/api/stopDownloads');
 define('API_ADD_FILES_TO_PACKAGE', '/api/addFiles');
 define('API_ADD_PACKAGE_WITH_NAME', '/api/addPackage');
 define('API_ADD_PACKAGE_WITHOUT_NAME', '/api/generateAndAddPackages');
@@ -79,8 +80,12 @@ function postDownloadLinks($links, $packageName = null) {
 	}
 }
 
-function postPyLoadConfig($params) {
+function postPyLoadConfig($params = []) {
 	if (loginPyLoad()) {
+		$stringParams = '';
+		foreach ($params as $param => $value) {
+			$stringParams .= $param.'='.$value.'&';
+		}
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
 			CURLOPT_URL => getPyLoadConfig(URL).API_POST_CONFIG,
@@ -91,7 +96,7 @@ function postPyLoadConfig($params) {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST => HTTP_POST,
-			CURLOPT_POSTFIELDS => $params,
+			CURLOPT_POSTFIELDS => $stringParams,
 			CURLOPT_HTTPHEADER => array(
 				'Content-Type: application/x-www-form-urlencoded',
 				'Cookie: beaker.session.id='.$_SESSION[PYLOAD_SESSION]
@@ -137,14 +142,23 @@ function cleanQueue() {
 	return simpleCommand(API_CLEAN_QUEUE);
 }
 
+function abortDownload($fileId) {
+	return simpleCommand(API_ABORT_DOWNLOAD.'?fids=['.$fileId.']');
+}
+
 function getDownloadConfig() {
 	return getPyloadServerConfig()['download'];
 }
 
 function limitSpeed($speedLimit) {
-	return postPyLoadConfig(sprintf(PARAM_SPEED_LIMIT.'=%d&'.PARAM_LIMIT_SPEED.'=%s', $speedLimit, $speedLimit > 0));
+	return postPyLoadConfig(array(
+		PARAM_SPEED_LIMIT => $speedLimit,
+		PARAM_LIMIT_SPEED => $speedLimit > 0
+	));
 }
 
 function setMaxParallelDownloads($maxParallelDownloads) {
-	return postPyLoadConfig(sprintf(PARAM_MAX_DOWNLOADS.'=%d', $maxParallelDownloads));
+	return postPyLoadConfig(array(
+		PARAM_MAX_DOWNLOADS => $maxParallelDownloads
+	));
 }

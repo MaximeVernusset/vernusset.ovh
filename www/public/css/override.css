@@ -9,3 +9,20 @@
 #pyLoadOverlay-monitor-section #max-downloads {
     width: 55px;
 }
+
+#pyLoadOverlay-monitor-section .download-status {
+    background-color: var(--light);
+}
+
+#pyLoadOverlay-monitor-section .abort-file {
+    color: var(--danger);
+}
+
+#pyLoadOverlay-monitor-section .abort-file:hover {
+    color: darkred;
+}
+
+#pyLoadOverlay-monitor-section .file-name {
+    font-size: 87.5%;
+    color: var(--pink);
+}
