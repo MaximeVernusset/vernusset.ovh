@@ -26,3 +26,11 @@
     font-size: 87.5%;
     color: var(--pink);
 }
+
+#pyLoadOverlay-monitor-section .restart-file {
+    color: var(--success);
+}
+
+#pyLoadOverlay-monitor-section .restart-file:hover {
+    color: green;
+}

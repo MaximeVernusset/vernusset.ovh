@@ -14,7 +14,7 @@
                         <button class="btn btn-sm btn-outline-info" onclick="cleanQueue(this)"><i class="fa fa-eraser" aria-hidden="true"></i>&nbsp;Clean queue</button>
                     </div>
                     <div class="input-group input-group-sm ml-0 mb-1 mr-1">
-                        <div class="input-group-prepend"><span class="input-group-text">Speed limit (KB/s)</span></div>
+                        <div class="input-group-prepend"><span class="input-group-text">Speed limit (kB/s)</span></div>
                         <input type="number" id="speed-limit" class="form-control" aria-label="Speed limit">
                         <div class="input-group-append"><button id="limit-speed-button" class="btn btn-secondary" onclick="limitSpeed(this)"><i class="fa fa-check" aria-hidden="true"></i></button></div>
                     </div>
@@ -32,8 +32,9 @@
                 <small><a href="<?=getConfig(URL, PYLOAD_CONFIG_FILE)?>"><i class="fas fa-sliders-h"></i>&nbsp;pyLoad interface&nbsp;<i class="fas fa-sliders-h"></i></a></small>
             </div>
         </div>
-        <div id="queue" class="row">
-            <!--TODO: display files not being donwloaded, with possibility to start them. + Add button "Restart failed"-->
+        <div class="">
+            <div id="queue" class="row">
+            </div>
         </div>
     </div>
 
@@ -74,9 +75,11 @@
         let downloadSpeed = 0;
 
         $(document).ready(() => {
-            useApis();
+            monitor();
+            fetchQueue();
             getDownloadConfig();
-            setInterval(useApis, FETCH_INTERVAL);
+            setInterval(monitor, FETCH_INTERVAL);
+            setInterval(fetchQueue, FETCH_INTERVAL * 2);
             $('#speed-limit').keypress(e => {
                 if (e.keyCode == ENTER_KEYCODE || e.which == ENTER_KEYCODE) {
                     $('#limit-speed-button').click();
@@ -89,7 +92,7 @@
             });
         });
 
-        function useApis() {
+        function monitor() {
             callPyLoadOverlayApi('GET', 'getCurrentDownloads')
                 .fail(() => console.log('Failed to get downloads'))
                 .done(response => {
@@ -231,6 +234,64 @@
                 })
                 .done(response => {
                     console.log('File download aborted');
+                });
+        }
+
+        function fetchQueue() {
+            callPyLoadOverlayApi('GET', 'getQueue')
+                .fail(() => {
+                    console.log('Failed to get queue');
+                })
+                .done(response => {
+                    let links = '<ul style="list-style-type: none; padding-left: 0;">';
+                    response.data.queue.forEach(package => {
+                        package.links.forEach(link => {
+                            const currentFile = currentDownloads.filter(d => d.fid === link.fid);
+                            const startFileButtonDisabled = currentFile && currentFile.length === 1 && currentFile[0].speed > 0 ? 'disabled' : '';
+                            links += `
+                                <li>
+                                    <button class="btn btn-link restart-file pt-0 pb-1 pr-0 pl-0" onclick="startFile(${link.fid}, this)" ${startFileButtonDisabled}><i class="fas fa-redo"></i></button> |
+                                    <button class="btn btn-link abort-file pt-0 pb-1 pl-0 pr-0" onclick="deleteFile(${link.fid}, this)"><i class="fas fa-trash-alt"></i></button>
+                                    <a href="${link.url}" target="_blank">${link.name}</a>
+                                    [${(link.size / GB_DIVIDER).toFixed(2)} GB | ${link.statusmsg}]
+                                </li>
+                            `
+                        });
+                    });
+                    links += '</ul>';
+                    $('#queue').html(links);
+                });
+        }
+
+        function startFile(fileId, button) {
+            callPyLoadOverlayApi('POST', 'restartDownload', {fileId})
+                .fail(() => {
+                    $(button).addClass('text-danger');
+                    console.log('Failed to restart file');
+                })
+                .done(response => {
+                    console.log('File restarted');
+                })
+                .always(() => {
+                    setTimeout(() => {
+                        $(button).removeClass('text-danger');
+                    }, FETCH_INTERVAL);
+                });
+        }
+
+        function deleteFile(fileId, button) {
+            callPyLoadOverlayApi('POST', 'deleteFile', {fileId})
+                .fail(() => {
+                    $(button).addClass('text-danger');
+                    console.log('Failed to delete file');
+                })
+                .done(response => {
+                    console.log('File deleted');
+                })
+                .always(() => {
+                    setTimeout(() => {
+                        $(button).removeClass('text-danger');
+                    }, FETCH_INTERVAL);
                 });
         }
     </script>

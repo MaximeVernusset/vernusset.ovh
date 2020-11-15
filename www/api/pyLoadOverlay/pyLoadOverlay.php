@@ -1,18 +1,22 @@
 <?php
 require_once __DIR__.'/../api.php';
 
+// pyload APIs: https://github.com/pyload/pyload/wiki/module.Api.Api
 define('API_ABORT_DOWNLOAD', '/api/stopDownloads');
 define('API_ADD_FILES_TO_PACKAGE', '/api/addFiles');
 define('API_ADD_PACKAGE_WITH_NAME', '/api/addPackage');
 define('API_ADD_PACKAGE_WITHOUT_NAME', '/api/generateAndAddPackages');
 define('API_CLEAN_QUEUE', '/api/deleteFinished');
+define('API_DELETE_FILE', '/api/deleteFiles');
 define('API_GET_CURRENT_DOWNLOADS', '/api/statusDownloads');
 define('API_GET_QUEUE', '/api/getQueue');
+define('API_GET_QUEUE_DATA', '/api/getQueueData');
 define('API_GET_SERVER_CONFIG', '/api/getConfig');
 define('API_GET_SERVER_STATUS', '/api/statusServer');
 define('API_LOGIN', '/api/login');
 define('API_PAUSE_DOWNLOAD', '/api/pauseServer');
 define('API_POST_CONFIG', '/json/save_config/general');
+define('API_RESTART_FILE', '/api/restartFile');
 define('API_START_DOWNLOAD', '/api/unpauseServer');
 define('NAME', 'name');
 define('PACKAGE_ID', 'pid');
@@ -122,6 +126,10 @@ function getServerStatus() {
 	return simpleCommand(API_GET_SERVER_STATUS);
 }
 
+function getQueueData() {
+	return simpleCommand(API_GET_QUEUE_DATA);
+}
+
 function getPyloadServerConfig() {
 	return simpleCommand(API_GET_SERVER_CONFIG);
 }
@@ -144,6 +152,14 @@ function cleanQueue() {
 
 function abortDownload($fileId) {
 	return simpleCommand(API_ABORT_DOWNLOAD.'?fids=['.$fileId.']');
+}
+
+function deleteFile($fileId) {
+	return simpleCommand(API_DELETE_FILE.'?fids=['.$fileId.']');
+}
+
+function restartFile($fileId) {
+	return simpleCommand(API_RESTART_FILE.'?fid='.$fileId);
 }
 
 function getDownloadConfig() {
