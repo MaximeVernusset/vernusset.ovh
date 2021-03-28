@@ -16,12 +16,12 @@
                     <div class="input-group input-group-sm ml-0 mb-1 mr-1">
                         <div class="input-group-prepend"><span class="input-group-text">Speed limit (kB/s)</span></div>
                         <input type="number" id="speed-limit" class="form-control" aria-label="Speed limit">
-                        <div class="input-group-append"><button id="limit-speed-button" class="btn btn-secondary" onclick="limitSpeed(this)"><i class="fa fa-check" aria-hidden="true"></i></button></div>
+                        <div class="input-group-append"><button id="limit-speed-button" class="btn btn-secondary" onclick="limitSpeed(this)" aria-label="Limit speed"><i class="fa fa-check" aria-hidden="true"></i></button></div>
                     </div>
                     <div class="input-group input-group-sm ml-0 mb-1">
                         <div class="input-group-prepend"><span class="input-group-text">Max downloads</span></div>
                         <input type="number" id="max-downloads" class="form-control" aria-label="Max parallel downloads">
-                        <div class="input-group-append"><button id="max-downloads-button" class="btn btn-secondary" onclick="setMaxParallelDownloads(this)"><i class="fa fa-check" aria-hidden="true"></i></button></div>
+                        <div class="input-group-append"><button id="max-downloads-button" class="btn btn-secondary" onclick="setMaxParallelDownloads(this)" aria-label="Set maximium parallel downloads"><i class="fa fa-check" aria-hidden="true"></i></button></div>
                     </div>
                 </div>
                 <div id="current-downloads" class="mt-3">

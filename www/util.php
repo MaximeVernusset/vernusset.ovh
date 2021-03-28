@@ -33,8 +33,11 @@ define('USERS_FILE', 'users.json');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
+$sessionTimeoutInSeconds = getConfig(SESSION_TIMEOUT) * 60;
+
 ini_set('session.cookie_httponly', 1);
-ini_set('session.gc_maxlifetime', 86400); // 1 day
+ini_set('session.gc_maxlifetime', $sessionTimeoutInSeconds);
+session_set_cookie_params($sessionTimeoutInSeconds);
 http_response_code(HTTP_NOT_FOUND);
 session_start();
 

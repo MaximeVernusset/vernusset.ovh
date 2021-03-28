@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="public/vendor/bootstrap/4.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="public/css/styles.css"/>
         <link rel="stylesheet" href="public/css/override.css"/>
-        <script src="public/vendor/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+        <script src="public/vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
         <script src="public/vendor/font-awesome/5.11.2/js/all.min.js"></script>
         <script src="public/vendor/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     </head>
@@ -22,12 +22,12 @@
             <a class="navbar-brand" href="index.php">
 				<i class="fa fa-terminal" aria-hidden="true"></i>&nbsp;<code>vernusset.ovh</code>
 			</a>
-			<button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle">
+			<button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" aria-label="Sidebar toogle">
 				<i class="fas fa-bars" aria-hidden="true"></i>
 			</button>
             <ul class="navbar-nav ml-auto mr-0 mr-md-3 my-2 my-md-0">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw" aria-hidden="true"></i></a>
+                    <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Drop down"><i class="fas fa-user fa-fw" aria-hidden="true"></i></a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <!--<a class="dropdown-item" href="#">Settings</a>
                         <div class="dropdown-divider"></div>-->
@@ -87,11 +87,11 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Maxime Vernusset <?=date("Y")?></div>
                             <div>
-                                <a href="https://vernusset.fr" target="_blank">Resume</a>
+                                <a href="https://vernusset.fr" target="_blank" rel="noopener noreferrer">Resume</a>
                                 &middot;
-                                <a href="https://github.com/MaximeVernusset" target="_blank">Github</a>
+                                <a href="https://github.com/MaximeVernusset" target="_blank" rel="noopener noreferrer">Github</a>
                                 &middot;
-                                <a href="https://www.linkedin.com/in/maximevernusset/" target="_blank">LinkedIn</a>
+                                <a href="https://www.linkedin.com/in/maximevernusset/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                             </div>
                         </div>
                     </div>
