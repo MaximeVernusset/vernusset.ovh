@@ -34,7 +34,9 @@ define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
 ini_set('session.cookie_httponly', 1);
+ini_set('session.gc_maxlifetime', 86400); // 1 day
 http_response_code(HTTP_NOT_FOUND);
+session_start();
 
 function loadConfig($configFile) {
 	$config = null;
@@ -51,6 +53,7 @@ function loadConfig($configFile) {
 
 function askToLogin() {
 	header(LOCATION_HEADER.'?action=login&redirectUrl='.urlencode(REQUESTED_URL));
+	session_unset();
 	session_destroy();
 	exit;
 }

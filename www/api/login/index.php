@@ -1,8 +1,6 @@
 <?php
 require_once __DIR__.'/../api.php';
 
-session_start();
-
 if (isset($_POST[USER]) && isset($_POST[PASSWORD]) && authenticate(htmlentities($_POST[USER]), htmlentities($_POST[PASSWORD]))) {
 	http_response_code(HTTP_OK);
 	$response[MESSAGE] = 'logged in';
@@ -16,7 +14,7 @@ if (isset($_POST[USER]) && isset($_POST[PASSWORD]) && authenticate(htmlentities(
 
 echo json_encode($response);
 
-function authenticate($user , $password) {
+function authenticate($user, $password) {
 	$users = loadUsers();
 	if (isset($users[$user]) && $users[$user][HASHED_PASSWORD] == hash(HASH_ALGO, $password)) {
 		$_SESSION[USER] = $user;

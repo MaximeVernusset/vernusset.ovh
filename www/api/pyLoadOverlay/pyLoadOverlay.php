@@ -29,7 +29,6 @@ define('SESSION', 'session');
 define('SPLIT_REGEX', '/(\r\n)|\r|\n/');
 define('USERNAME', 'username');
 
-session_start();
 http_response_code(HTTP_FORBIDDEN);
 
 function getPyLoadConfig($name) {
