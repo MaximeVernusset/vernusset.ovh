@@ -3,7 +3,7 @@ require_once __DIR__.'/../monitor.php';
 
 define('SPEED_LIMIT', 'speedLimit');
 
-if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
+if (isConnected() && hasAuthorities([PYLOAD])) {
 	if (isset($_POST[SPEED_LIMIT]) && (is_numeric($_POST[SPEED_LIMIT]) || empty($_POST[SPEED_LIMIT]))) {
 		limitSpeed(intval($_POST[SPEED_LIMIT]));
 		http_response_code(HTTP_OK);

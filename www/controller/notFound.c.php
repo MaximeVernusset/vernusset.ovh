@@ -1,6 +1,5 @@
 <?php
 checkIsConnected();
-checkSessionValidity();
 
 httpCode(HTTP_NOT_FOUND, $title, $view);
 

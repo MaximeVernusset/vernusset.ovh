@@ -3,7 +3,7 @@ require_once __DIR__.'/../monitor.php';
 
 define('FILE_ID', 'fileId');
 
-if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
+if (isConnected() && hasAuthorities([PYLOAD])) {
 	if (isset($_POST[FILE_ID])) {
 		deleteFile(htmlentities($_POST[FILE_ID]));
 		http_response_code(HTTP_OK);

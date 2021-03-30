@@ -15,7 +15,6 @@ define('HTTP_INTERNAL_ERROR', 500);
 define('HTTP_NOT_FOUND', 404);
 define('HTTP_OK', 200);
 define('IS_CONNECTED', 'isConnected');
-define('LAST_LOGIN', 'lastLogin');
 define('LAST_REQUEST', 'lastRequest');
 define('LINKS', 'links');
 define('LOCATION_HEADER', 'location: ');
@@ -33,60 +32,48 @@ define('USERS_FILE', 'users.json');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
-$sessionTimeoutInSeconds = getConfig(SESSION_TIMEOUT) * 60;
-
+$cookieLifetimeInSeconds = getConfig(SESSION_TIMEOUT) * 60 * 10;
 ini_set('session.cookie_httponly', 1);
-ini_set('session.gc_maxlifetime', $sessionTimeoutInSeconds);
-session_set_cookie_params($sessionTimeoutInSeconds);
+ini_set('session.gc_maxlifetime', $cookieLifetimeInSeconds);
+session_set_cookie_params($cookieLifetimeInSeconds);
+
 http_response_code(HTTP_NOT_FOUND);
 session_start();
 
 function loadConfig($configFile) {
 	$config = null;
 	if ($configFile !== USERS_FILE) {
-		if (isset($_SESSION[$configFile])) {
-			$config = $_SESSION[$configFile];
-		} else {
-			$config = json_decode(file_get_contents(CONFIG_DIR.$configFile), true);
-			$_SESSION[$configFile] = $config;
-		}
+		$config = json_decode(file_get_contents(CONFIG_DIR.$configFile), true);
 	}
 	return $config;
 }
 
-function askToLogin() {
-	header(LOCATION_HEADER.'?action=login&redirectUrl='.urlencode(REQUESTED_URL));
+function clearSessionAndCookie() {
 	session_unset();
 	session_destroy();
+	setcookie(session_name(), '', time() - 1, '/');
+}
+
+function askToLogin() {
+	header(LOCATION_HEADER.'?action=login&redirectUrl='.urlencode(REQUESTED_URL));
+	clearSessionAndCookie();
 	exit;
 }
 
 function isConnected() {
-	return isset($_SESSION[IS_CONNECTED]) && $_SESSION[IS_CONNECTED];
+	$isConnected = isset($_SESSION[IS_CONNECTED]) && $_SESSION[IS_CONNECTED];
+	$now = time();
+	$timedOut = true;
+	$timeout = getConfig(SESSION_TIMEOUT) * 60;
+	if (isset($_SESSION[LAST_REQUEST])) {
+		$timedOut = $_SESSION[LAST_REQUEST] + $timeout < $now;
+	}
+	$_SESSION[LAST_REQUEST] = $now;
+	return $isConnected && !$timedOut;
 }
 
 function checkIsConnected() {
 	if (!isConnected()) {
-		askToLogin();
-	}
-}
-
-function sessionTimedOut() {
-	$now = time();
-	$timedOut = true;
-	$timeout = getConfig(SESSION_TIMEOUT) * 60;
-	if (isset($_SESSION[LAST_LOGIN])) {
-		$timedOut = $_SESSION[LAST_LOGIN] + $timeout < $now;
-		if (isset($_SESSION[LAST_REQUEST])) {
-			$timedOut &= $_SESSION[LAST_REQUEST] + $timeout < $now;
-		}
-	}
-	$_SESSION[LAST_REQUEST] = $now;
-	return $timedOut;
-}
-
-function checkSessionValidity() {
-	if (sessionTimedOut()) {
 		askToLogin();
 	}
 }
@@ -97,7 +84,7 @@ function getUser() {
 
 function deconnectIfNeeded() {
 	if (isset($_SESSION[STAY_CONNECTED]) && !$_SESSION[STAY_CONNECTED]) {
-		session_destroy();
+		clearSessionAndCookie();
 	}
 }
 

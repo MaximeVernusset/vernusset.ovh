@@ -3,7 +3,7 @@ require_once __DIR__.'/../monitor.php';
 
 define('MAX_PARALLEL_DOWNLOADS', 'maxParallelDownloads');
 
-if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
+if (isConnected() && hasAuthorities([PYLOAD])) {
 	if (isset($_POST[MAX_PARALLEL_DOWNLOADS]) && is_numeric($_POST[MAX_PARALLEL_DOWNLOADS])) {
 		setMaxParallelDownloads(intval($_POST[MAX_PARALLEL_DOWNLOADS]));
 		http_response_code(HTTP_OK);

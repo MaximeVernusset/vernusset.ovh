@@ -4,7 +4,6 @@ header("Location: index.php?action=pyload/monitor");
 
 /*
 checkIsConnected();
-checkSessionValidity();
 
 $title = 'vernusset.ovh';
 $view = VIEW_DIR.'home.v.php';

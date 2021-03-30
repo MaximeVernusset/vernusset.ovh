@@ -1,6 +1,5 @@
 <?php
 checkIsConnected();
-checkSessionValidity();
 
 $title = 'Monitor';
 $view = VIEW_DIR.'pyLoadOverlay/monitor.v.php';

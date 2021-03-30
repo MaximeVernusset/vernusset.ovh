@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__.'/../pyLoadOverlay.php';
 
-if (isConnected() && !sessionTimedOut() && hasAuthorities([PYLOAD])) {
+if (isConnected() && hasAuthorities([PYLOAD])) {
 	http_response_code(HTTP_BAD_REQUEST);
 	$response[MESSAGE] = 'invalid given links';
 	if (isset($_POST[LINKS])) {

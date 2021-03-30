@@ -21,7 +21,7 @@ function authenticate($user, $password) {
 		$_SESSION[IS_CONNECTED] = true;
 		$_SESSION[STAY_CONNECTED] = isset($_POST[STAY_CONNECTED]) && filter_var($_POST[STAY_CONNECTED], FILTER_VALIDATE_BOOLEAN);
 		$_SESSION[AUTHORITIES] = $users[$user][AUTHORITIES];
-		$_SESSION[LAST_LOGIN] = time();
+		$_SESSION[LAST_REQUEST] = time();
 		return true;
 	}
 	return false;

@@ -1,6 +1,5 @@
 <?php
 checkIsConnected();
-checkSessionValidity();
 
 $title = 'Collector';
 $view = VIEW_DIR.'pyLoadOverlay/collector.v.php';

@@ -1,7 +1,7 @@
 <?php
 $redirectUrl = isset($_GET[REDIRECT_URL]) ? urldecode($_GET[REDIRECT_URL]) : DEFAULT_PAGE;
 
-if (isConnected() && !sessionTimedOut()) {
+if (isConnected()) {
 	header(LOCATION_HEADER.$redirectUrl);
 	exit;
 }
