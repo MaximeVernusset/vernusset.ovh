@@ -1,14 +1,11 @@
 <?php
 // Temporary redirection to monitoring page
-header("Location: index.php?action=pyload/monitor");
+header(LOCATION_HEADER.'index.php?action=pyload/monitor');
 
 /*
 checkIsConnected();
 
 $title = 'vernusset.ovh';
-$view = VIEW_DIR.'home.v.php';
+$view = 'home.v.php';
 
-require_once VIEW_DIR.'/page.v.php';
-
-deconnectIfNeeded();
 */

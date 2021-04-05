@@ -5,6 +5,7 @@ define('AUTHORITIES', 'authorities');
 define('CONFIG', 'config');
 define('CONFIG_DIR', __DIR__.'/../config/');
 define('CONTROLLER_DIR', __DIR__.'/controller/');
+define('DEBUG', 'debug');
 define('DEFAULT_PAGE', 'index.php');
 define('GENERAL_CONFIG_FILE', 'config.json');
 define('HASH_ALGO', 'sha256');
@@ -32,9 +33,9 @@ define('USERS_FILE', 'users.json');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
-$cookieLifetimeInSeconds = getConfig(SESSION_TIMEOUT) * 60 * 10;
-ini_set('session.cookie_httponly', 1);
-ini_set('session.gc_maxlifetime', $cookieLifetimeInSeconds);
+$cookieLifetimeInSeconds = getConfig(SESSION_TIMEOUT) * 60;
+ini_set('session.cookie_httponly', '1');
+ini_set('session.gc_maxlifetime', '2147483647'); // 2^31-1
 session_set_cookie_params($cookieLifetimeInSeconds);
 
 http_response_code(HTTP_NOT_FOUND);
@@ -60,13 +61,21 @@ function askToLogin() {
 	exit;
 }
 
+function renewSessionCookie($lifetime) {
+	setcookie(session_name(), $_COOKIE[session_name()], time() + $lifetime, '/');
+}
+
 function isConnected() {
-	$isConnected = isset($_SESSION[IS_CONNECTED]) && $_SESSION[IS_CONNECTED];
 	$now = time();
-	$timedOut = true;
-	$timeout = getConfig(SESSION_TIMEOUT) * 60;
-	if (isset($_SESSION[LAST_REQUEST])) {
-		$timedOut = $_SESSION[LAST_REQUEST] + $timeout < $now;
+	$timedOut = false;
+	$isConnected = isset($_SESSION[IS_CONNECTED]) && $_SESSION[IS_CONNECTED];
+	if (isset($_SESSION[STAY_CONNECTED])) {
+		$timeout = getConfig(SESSION_TIMEOUT) * 60;
+		if (!$_SESSION[STAY_CONNECTED] && isset($_SESSION[LAST_REQUEST])) {
+			$timedOut = $_SESSION[LAST_REQUEST] + $timeout < $now;
+		} else if ($_SESSION[STAY_CONNECTED]) {
+			renewSessionCookie($timeout);
+		}
 	}
 	$_SESSION[LAST_REQUEST] = $now;
 	return $isConnected && !$timedOut;
@@ -80,12 +89,6 @@ function checkIsConnected() {
 
 function getUser() {
 	return isset($_SESSION[USER]) ? $_SESSION[USER] : VISITOR;
-}
-
-function deconnectIfNeeded() {
-	if (isset($_SESSION[STAY_CONNECTED]) && !$_SESSION[STAY_CONNECTED]) {
-		clearSessionAndCookie();
-	}
 }
 
 function loadUsers() {

@@ -3,23 +3,27 @@ require_once __DIR__.'/util.php';
 
 http_response_code(HTTP_OK);
 
-$controller = CONTROLLER_DIR.'home.c.php';
+$controller = 'home.c.php';
 
 if (isset($_GET[ACTION])) {
 	switch($_GET[ACTION]) {
 	case 'login':
-		$controller = CONTROLLER_DIR.'login.c.php';
+		$controller = 'login.c.php';
 		break;
 	case 'pyload/collect':
-		$controller = CONTROLLER_DIR.'pyLoadOverlay/collector.c.php';
+		$controller = 'pyLoadOverlay/collector.c.php';
 		break;
 	case 'pyload/monitor':
-		$controller = CONTROLLER_DIR.'pyLoadOverlay/monitor.c.php';
+		$controller = 'pyLoadOverlay/monitor.c.php';
+		break;
+	case 'admin/debug/var':
+		$controller = 'admin/debug/variables.c.php';
 		break;
 	default:
-		$controller = CONTROLLER_DIR.'notFound.c.php';
+		$controller = 'notFound.c.php';
 		break;
 	}
 }
 
-require_once $controller;
+require_once CONTROLLER_DIR.$controller;
+require_once VIEW_DIR.'page.v.php';

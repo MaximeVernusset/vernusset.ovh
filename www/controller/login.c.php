@@ -7,12 +7,9 @@ if (isConnected()) {
 }
 
 $title = 'Login';
-$view = VIEW_DIR.'login.v.php';
-
-require_once VIEW_DIR.'page.v.php';
+$view = 'login.v.php';
 
 function formatSessionTimeout() {
-	
 	$timeout = getConfig(SESSION_TIMEOUT);
 	$formatted = '';
 

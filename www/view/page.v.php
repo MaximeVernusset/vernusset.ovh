@@ -56,17 +56,16 @@
                                 Collector
 							</a>
 <?php } ?>
-<?php if (hasAuthorities(['test'])) { ?>
-                            <div class="sb-sidenav-menu-heading">Other</div>
+<?php if (hasAuthorities([DEBUG])) { ?>
+                            <div class="sb-sidenav-menu-heading">Administration</div>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-								<div class="sb-nav-link-icon"><i class="fas fa-columns" aria-hidden="true"></i></div>
-                                Dropdown
+								<div class="sb-nav-link-icon"><i class="fas fa-bug" aria-hidden="true"></i></div>
+                                Debug
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down" aria-hidden="true"></i></div>
 							</a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-									<a class="nav-link" href="#">1</a>
-									<a class="nav-link" href="#">2</a>
+									<a class="nav-link" href="index.php?action=admin/debug/var">Variables</a>
 								</nav>
                             </div>
 <?php } ?>
