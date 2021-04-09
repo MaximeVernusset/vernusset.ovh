@@ -7,4 +7,4 @@ if (isConnected() && hasAuthorities([PYLOAD])) {
 	$response[DATA]['downloadConfig'] = getDownloadConfig();
 }
 
-echo json_encode($response);
+saveSessionAndReturnResponse($response);

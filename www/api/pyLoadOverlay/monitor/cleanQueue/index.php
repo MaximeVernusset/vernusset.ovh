@@ -7,4 +7,4 @@ if (isConnected() && hasAuthorities([PYLOAD])) {
 	$response[DATA][PACKAGES_IDS] = cleanQueue();
 }
 
-echo json_encode($response);
+saveSessionAndReturnResponse($response);

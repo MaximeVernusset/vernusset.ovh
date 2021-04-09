@@ -27,3 +27,5 @@ if (isset($_GET[ACTION])) {
 
 require_once CONTROLLER_DIR.$controller;
 require_once VIEW_DIR.'page.v.php';
+
+customSession_save();

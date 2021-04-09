@@ -10,4 +10,4 @@ if (isConnected() && hasAuthorities([PYLOAD])) {
 	}
 }
 
-echo json_encode($response);
+saveSessionAndReturnResponse($response);

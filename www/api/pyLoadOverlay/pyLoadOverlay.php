@@ -41,14 +41,14 @@ function internalError() {
 }
 
 function loginPyLoad() {
-	if (isset($_SESSION[PYLOAD_SESSION])) {
-		return $_SESSION[PYLOAD_SESSION];
+	if (isset($GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION])) {
+		return $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION];
 	} else {
 		$sessionId = httpPost(getPyLoadConfig(URL).API_LOGIN, array(
 			USERNAME => getPyLoadConfig(USERNAME),
 			PASSWORD => getPyLoadConfig(PASSWORD)
 		));
-		$_SESSION[PYLOAD_SESSION] = json_decode($sessionId);
+		$GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION] = json_decode($sessionId);
 		return !filter_var($sessionId, FILTER_VALIDATE_BOOLEAN);
 	}
 }
@@ -58,7 +58,7 @@ function postDownloadLinks($links, $packageName = null) {
 		$pyLoadUrl = getPyLoadConfig(URL);
 		$apiToCall = API_ADD_PACKAGE_WITHOUT_NAME;
 		$formData = array(
-			SESSION => $_SESSION[PYLOAD_SESSION]
+			SESSION => $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION]
 		);
 
 		if ($packageName != null) {
@@ -102,7 +102,7 @@ function postPyLoadConfig($params = []) {
 			CURLOPT_POSTFIELDS => $stringParams,
 			CURLOPT_HTTPHEADER => array(
 				'Content-Type: application/x-www-form-urlencoded',
-				'Cookie: beaker.session.id='.$_SESSION[PYLOAD_SESSION]
+				'Cookie: beaker.session.id='.$GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION]
 			),
 		));
 		$response = curl_exec($curl);
@@ -115,7 +115,7 @@ function postPyLoadConfig($params = []) {
 
 function simpleCommand($apiToCall) {
 	if (loginPyLoad()) {
-		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, array(SESSION => $_SESSION[PYLOAD_SESSION])), true);
+		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, array(SESSION => $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION])), true);
 	} else {
 		return internalError();
 	}

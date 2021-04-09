@@ -6,17 +6,17 @@
 		<div class="col">
 			<details>
 				<summary>Session</summary>
-				<code>
-					<pre><?php print_r($_SESSION); ?></pre>
-				</code>
+				<pre>
+					<code><?=$session?></code>
+				</pre>
 			</details>
 		</div>
 		<div class="col">
 			<details>
 				<summary>Cookies</summary>
-				<code>
-					<pre><?php print_r($_COOKIE); ?></pre>
-				</code>
+				<pre>
+					<code><?=$cookies?></code>
+				</pre>
 			</details>
 		</div>
 	</div>
@@ -24,9 +24,9 @@
 		<div class="col">
 			<details>
 				<summary>Server</summary>
-				<code>
-					<pre><?php print_r($_SERVER); ?></pre>
-				</code>
+				<pre>
+					<code><?=$server?></code>
+				</pre>
 			</details>
 		</div>
 	</div>
@@ -34,9 +34,9 @@
 		<div class="col">
 			<details>
 				<summary>Ini</summary>
-				<code>
-					<pre><?php print_r(ini_get_all()); ?></pre>
-				</code>
+				<pre>
+					<code><?=$ini?></code>
+				</pre>
 			</details>
 		</div>
 	</div>

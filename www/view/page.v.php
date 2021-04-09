@@ -63,7 +63,7 @@
                                 Debug
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down" aria-hidden="true"></i></div>
 							</a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <div class="collapse" id="collapseLayouts" data-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
 									<a class="nav-link" href="index.php?action=admin/debug/var">Variables</a>
 								</nav>

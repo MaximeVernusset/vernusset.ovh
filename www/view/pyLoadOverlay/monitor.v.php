@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-xl-5 text-center">
-                <canvas id="download-speed" width="100%"></canvas>
+                <canvas id="download-speed"></canvas>
                 <small><a href="<?=getConfig(URL, PYLOAD_CONFIG_FILE)?>"><i class="fas fa-sliders-h"></i>&nbsp;pyLoad interface&nbsp;<i class="fas fa-sliders-h"></i></a></small>
             </div>
         </div>

@@ -31,3 +31,11 @@ function httpPost($url, $data = []) {
 function httpGet($url, $data = []) {
 	return httpRequest(HTTP_GET, $url, $data);
 }
+
+function saveSessionAndReturnResponse($response) {
+	if (intdiv(http_response_code(), 100) == 2) {
+		customSession_save();
+	}
+	echo json_encode($response);
+	exit();
+}

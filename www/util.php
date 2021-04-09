@@ -5,6 +5,8 @@ define('AUTHORITIES', 'authorities');
 define('CONFIG', 'config');
 define('CONFIG_DIR', __DIR__.'/../config/');
 define('CONTROLLER_DIR', __DIR__.'/controller/');
+define('CUSTOM_SESSION', 'customSession');
+define('CUSTOM_SESSION_ID', 'CSID');
 define('DEBUG', 'debug');
 define('DEFAULT_PAGE', 'index.php');
 define('GENERAL_CONFIG_FILE', 'config.json');
@@ -26,6 +28,7 @@ define('PYLOAD_CONFIG_FILE', 'pyload.json');
 define('REDIRECT_URL', 'redirectUrl');
 define('REQUESTED_URL', $_SERVER['REQUEST_URI']);
 define('SESSION_TIMEOUT', 'sessionTimeOut');
+define('SESSIONS_DIR', __DIR__.'/../sessions/');
 define('STAY_CONNECTED', 'stayConnected');
 define('URL', 'url');
 define('USER', 'user');
@@ -33,13 +36,59 @@ define('USERS_FILE', 'users.json');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 
-$cookieLifetimeInSeconds = getConfig(SESSION_TIMEOUT) * 60;
-ini_set('session.cookie_httponly', '1');
-ini_set('session.gc_maxlifetime', '2147483647'); // 2^31-1
-session_set_cookie_params($cookieLifetimeInSeconds);
-
 http_response_code(HTTP_NOT_FOUND);
-session_start();
+customSession_start();
+
+function customSession_start() {
+	if (!file_exists(SESSIONS_DIR)) {
+		mkdir(SESSIONS_DIR);
+	}
+	cleanExpiredCustomSessions();
+
+	$customSid = bin2hex(openssl_random_pseudo_bytes(16));
+	if (isset($_COOKIE[CUSTOM_SESSION_ID])) {
+		$customSid = $_COOKIE[CUSTOM_SESSION_ID];
+	} else {
+		setcookie(CUSTOM_SESSION_ID, $customSid, time() + getConfig(SESSION_TIMEOUT) * 60, '/', false, true);
+	}
+
+	$GLOBALS[CUSTOM_SESSION] = array(CUSTOM_SESSION_ID => $customSid);
+	$sessionFileName = SESSIONS_DIR.$customSid;
+	if (file_exists($sessionFileName)) {
+		$GLOBALS[CUSTOM_SESSION] = openSessionFile($sessionFileName);
+	}
+}
+
+function customSession_save() {
+	$sessionFileName = SESSIONS_DIR.$GLOBALS[CUSTOM_SESSION][CUSTOM_SESSION_ID];
+	file_put_contents($sessionFileName, base64_encode(json_encode($GLOBALS[CUSTOM_SESSION])));
+}
+
+function customSession_destroy() {
+	unlink(SESSIONS_DIR.$GLOBALS[CUSTOM_SESSION][CUSTOM_SESSION_ID]);
+	unset($GLOBALS[CUSTOM_SESSION]);
+}
+
+function openSessionFile($sessionFileName) {
+	return json_decode(base64_decode(file_get_contents($sessionFileName)), true);
+}
+
+function cleanExpiredCustomSessions() {
+	$rand = rand(0, 10);
+	if ($rand == 0) {
+		$now = time();
+		$timeout = getConfig(SESSION_TIMEOUT) * 60;
+		foreach (scandir(SESSIONS_DIR) as $sid) {
+			$sessionFileName = SESSIONS_DIR.$sid;
+			if (is_file($sessionFileName)) {
+				$session = openSessionFile($sessionFileName);
+				if (!isset($session[LAST_REQUEST]) || $session[LAST_REQUEST] + $timeout < $now) {
+					unlink($sessionFileName);
+				}
+			}
+		}
+	}
+}
 
 function loadConfig($configFile) {
 	$config = null;
@@ -50,9 +99,8 @@ function loadConfig($configFile) {
 }
 
 function clearSessionAndCookie() {
-	session_unset();
-	session_destroy();
-	setcookie(session_name(), '', time() - 1, '/');
+	customSession_destroy();
+	setcookie(CUSTOM_SESSION_ID, '', time() - 1, '/');
 }
 
 function askToLogin() {
@@ -62,22 +110,22 @@ function askToLogin() {
 }
 
 function renewSessionCookie($lifetime) {
-	setcookie(session_name(), $_COOKIE[session_name()], time() + $lifetime, '/');
+	setcookie(CUSTOM_SESSION_ID, $_COOKIE[CUSTOM_SESSION_ID], time() + $lifetime, '/', false, true);
 }
 
 function isConnected() {
 	$now = time();
 	$timedOut = false;
-	$isConnected = isset($_SESSION[IS_CONNECTED]) && $_SESSION[IS_CONNECTED];
-	if (isset($_SESSION[STAY_CONNECTED])) {
+	$isConnected = isset($GLOBALS[CUSTOM_SESSION][IS_CONNECTED]) && $GLOBALS[CUSTOM_SESSION][IS_CONNECTED];
+	if (isset($GLOBALS[CUSTOM_SESSION][STAY_CONNECTED])) {
 		$timeout = getConfig(SESSION_TIMEOUT) * 60;
-		if (!$_SESSION[STAY_CONNECTED] && isset($_SESSION[LAST_REQUEST])) {
-			$timedOut = $_SESSION[LAST_REQUEST] + $timeout < $now;
-		} else if ($_SESSION[STAY_CONNECTED]) {
+		if (!$GLOBALS[CUSTOM_SESSION][STAY_CONNECTED] && isset($GLOBALS[CUSTOM_SESSION][LAST_REQUEST])) {
+			$timedOut = $GLOBALS[CUSTOM_SESSION][LAST_REQUEST] + $timeout < $now;
+		} else if ($GLOBALS[CUSTOM_SESSION][STAY_CONNECTED]) {
 			renewSessionCookie($timeout);
 		}
 	}
-	$_SESSION[LAST_REQUEST] = $now;
+	$GLOBALS[CUSTOM_SESSION][LAST_REQUEST] = $now;
 	return $isConnected && !$timedOut;
 }
 
@@ -88,7 +136,7 @@ function checkIsConnected() {
 }
 
 function getUser() {
-	return isset($_SESSION[USER]) ? $_SESSION[USER] : VISITOR;
+	return isset($GLOBALS[CUSTOM_SESSION][USER]) ? $GLOBALS[CUSTOM_SESSION][USER] : VISITOR;
 }
 
 function loadUsers() {
@@ -101,10 +149,10 @@ function getConfig($name, $configFile = GENERAL_CONFIG_FILE) {
 }
 
 function hasAuthorities($authorities) {
-	$hasAuthorities = isset($_SESSION[AUTHORITIES]);
-	if ($hasAuthorities && !in_array(ADMIN, $_SESSION[AUTHORITIES])) {
+	$hasAuthorities = isset($GLOBALS[CUSTOM_SESSION][AUTHORITIES]);
+	if ($hasAuthorities && !in_array(ADMIN, $GLOBALS[CUSTOM_SESSION][AUTHORITIES])) {
 		foreach ($authorities as $authority) {
-			$hasAuthorities &= in_array($authority, $_SESSION[AUTHORITIES]);
+			$hasAuthorities &= in_array($authority, $GLOBALS[CUSTOM_SESSION][AUTHORITIES]);
 		}
 	}
 	return $hasAuthorities;

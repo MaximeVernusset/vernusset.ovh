@@ -7,4 +7,4 @@ if (isConnected() && hasAuthorities([PYLOAD])) {
 	$response[DATA]['serverStatus'] = getServerStatus();
 }
 
-echo json_encode($response);
+saveSessionAndReturnResponse($response);
