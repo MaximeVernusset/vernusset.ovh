@@ -3,7 +3,7 @@ require_once __DIR__.'/../pyLoadOverlay.php';
 
 if (isConnected() && hasAuthorities([PYLOAD])) {
 	http_response_code(HTTP_BAD_REQUEST);
-	$response[MESSAGE] = 'invalid given links';
+	$response[MESSAGE] = 'Invalid given links';
 	if (isset($_POST[LINKS])) {
 		$links = parseAndSanitizeInputLinks($_POST[LINKS]);
 		$response[DATA][LINKS] = $links;
@@ -14,7 +14,7 @@ if (isConnected() && hasAuthorities([PYLOAD])) {
 			if (!is_array($packageIds) && $packageIds != false) {
 				$packageIds = array($packageIds);
 			}
-			$response[MESSAGE] = 'links collected';
+			$response[MESSAGE] = 'Links collected';
 			$response[DATA][PACKAGES_IDS] = $packageIds;
 		}
 	}

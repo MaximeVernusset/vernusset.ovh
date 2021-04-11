@@ -6,6 +6,7 @@ define('CONFIG', 'config');
 define('CONFIG_DIR', __DIR__.'/../config/');
 define('CONTROLLER_DIR', __DIR__.'/controller/');
 define('CUSTOM_SESSION', 'customSession');
+define('CUSTOM_SESSION_COOKIE_PATH', '/');
 define('CUSTOM_SESSION_ID', 'CSID');
 define('DEBUG', 'debug');
 define('DEFAULT_PAGE', 'index.php');
@@ -49,7 +50,7 @@ function customSession_start() {
 	if (isset($_COOKIE[CUSTOM_SESSION_ID])) {
 		$customSid = $_COOKIE[CUSTOM_SESSION_ID];
 	} else {
-		setcookie(CUSTOM_SESSION_ID, $customSid, time() + getConfig(SESSION_TIMEOUT) * 60, '/', false, true);
+		setcookie(CUSTOM_SESSION_ID, $customSid, time() + getConfig(SESSION_TIMEOUT) * 60, CUSTOM_SESSION_COOKIE_PATH, false, true);
 	}
 
 	$GLOBALS[CUSTOM_SESSION] = array(CUSTOM_SESSION_ID => $customSid);
@@ -100,7 +101,7 @@ function loadConfig($configFile) {
 
 function clearSessionAndCookie() {
 	customSession_destroy();
-	setcookie(CUSTOM_SESSION_ID, '', time() - 1, '/');
+	setcookie(CUSTOM_SESSION_ID, '', time() - 1, CUSTOM_SESSION_COOKIE_PATH);
 }
 
 function askToLogin() {
@@ -110,7 +111,7 @@ function askToLogin() {
 }
 
 function renewSessionCookie($lifetime) {
-	setcookie(CUSTOM_SESSION_ID, $_COOKIE[CUSTOM_SESSION_ID], time() + $lifetime, '/', false, true);
+	setcookie(CUSTOM_SESSION_ID, $_COOKIE[CUSTOM_SESSION_ID], time() + $lifetime, CUSTOM_SESSION_COOKIE_PATH, false, true);
 }
 
 function isConnected() {

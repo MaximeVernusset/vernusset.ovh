@@ -3,12 +3,12 @@ require_once __DIR__.'/../api.php';
 
 if (isset($_POST[USER]) && isset($_POST[PASSWORD]) && authenticate(htmlentities($_POST[USER]), htmlentities($_POST[PASSWORD]))) {
 	http_response_code(HTTP_OK);
-	$response[MESSAGE] = 'logged in';
+	$response[MESSAGE] = 'Logged in';
 	$response[DATA][USER] = $GLOBALS[CUSTOM_SESSION][USER];
 	$response[DATA][AUTHORITIES] = $GLOBALS[CUSTOM_SESSION][AUTHORITIES];
 	$response[DATA][STAY_CONNECTED] = $GLOBALS[CUSTOM_SESSION][STAY_CONNECTED];
 } else {
-	$response[MESSAGE] = 'failed to log in';
+	$response[MESSAGE] = 'Failed to log in';
 	http_response_code(HTTP_FORBIDDEN);
 }
 
