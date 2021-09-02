@@ -12,7 +12,7 @@ Based on [SB Admin](https://github.com/StartBootstrap/startbootstrap-sb-admin) B
 ### Frontend
 
 - Bootstrap
-- jQuery
+- jQuery & Vanilla JS
 
 ## Features
 
