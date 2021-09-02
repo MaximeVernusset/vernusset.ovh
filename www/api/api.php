@@ -36,6 +36,10 @@ function saveSessionAndReturnResponse($response) {
 	if (intdiv(http_response_code(), 100) == 2) {
 		customSession_save();
 	}
+	returnResponse($response);
+}
+
+function returnResponse($response) {
 	echo json_encode($response);
 	exit();
 }

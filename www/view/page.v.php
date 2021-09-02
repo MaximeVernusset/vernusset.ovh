@@ -56,6 +56,15 @@
                                 Collector
 							</a>
 <?php } ?>
+<?php if (hasAuthorities([VIDEO])) { ?>
+							<div class="sb-sidenav-menu-heading">Cameras</div>
+                            <a class="nav-link" href="index.php?action=cam/video">
+								<div class="sb-nav-link-icon">
+									<i class="fas fa-video" aria-hidden="true"></i>
+								</div>
+                                Video
+							</a>
+<?php } ?>
 <?php if (hasAuthorities([DEBUG])) { ?>
                             <div class="sb-sidenav-menu-heading">Administration</div>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">

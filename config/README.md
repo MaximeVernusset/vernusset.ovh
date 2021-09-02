@@ -13,3 +13,7 @@ List of usersnames associated with their hashed password (initial password hashe
 ## pyload.json
 
 pyLoad overlay specific configuration.
+
+## cameras.json
+
+List of cameras grouped by location, with allowed usernames to access the groups.

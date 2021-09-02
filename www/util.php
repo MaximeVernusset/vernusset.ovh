@@ -2,6 +2,10 @@
 define('ACTION', 'action');
 define('ADMIN', 'admin');
 define('AUTHORITIES', 'authorities');
+define('CAMERAS', 'cameras');
+define('CAMERAS_CONFIG_FILE', 'cameras.json');
+define('CAMERAS_DIR', __DIR__.'/../cameras/');
+define('CAMERA_URL_OVERRIDE_FILE_FORMAT', '%s-%s');
 define('CONFIG', 'config');
 define('CONFIG_DIR', __DIR__.'/../config/');
 define('CONTROLLER_DIR', __DIR__.'/controller/');
@@ -34,6 +38,7 @@ define('STAY_CONNECTED', 'stayConnected');
 define('URL', 'url');
 define('USER', 'user');
 define('USERS_FILE', 'users.json');
+define('VIDEO', 'video');
 define('VIEW_DIR', __DIR__.'/view/');
 define('VISITOR', 'visitor');
 

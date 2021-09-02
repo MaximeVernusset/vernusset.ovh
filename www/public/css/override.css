@@ -35,6 +35,10 @@
     color: green;
 }
 
+.cameras {
+    margin-bottom: 0.5rem;
+}
+
 #debug-variables details {
     border-radius: 0.5rem;
     padding: 1rem;

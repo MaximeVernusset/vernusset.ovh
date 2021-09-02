@@ -1,0 +1,19 @@
+[
+    {
+        "groupName": "Indoor",
+        "allowedUsers": ["cctv"],
+        "cameras": [
+            {
+                "name": "**motion-user**",
+                "url": "**URL/IP:PORT**",
+                "password": "**motion-password**"
+            }
+        ]
+    },
+    {
+        "groupName": "Outdoor",
+        "allowedUsers": ["cctv"],
+        "cameras": [
+        ]
+    }
+]

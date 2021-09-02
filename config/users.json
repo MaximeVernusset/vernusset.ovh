@@ -7,6 +7,10 @@
 		"hashedPassword": "8c6976e5b5411422bde908bd4dee15dfb167a9c883fc3bb8a81f6d2ab448a917",
 		"authorities": ["pyload"]
 	},
+	"cctv": {
+		"hashedPassword": "4d61edc4667c32de58bf74df43697401b929eb6646c1f1acd7a660f4fd62323c",
+		"authorities": ["video"]
+	},
 	"test": {
 		"hashedPassword": "8f86d081884d7d659a2feaa0c55ad115a3bf4f1b2b0c822cd15d6c15b0f00a09",
 		"authorities": ["test"]

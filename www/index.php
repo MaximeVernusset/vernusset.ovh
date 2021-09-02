@@ -15,6 +15,9 @@ if (isset($_GET[ACTION])) {
 		break;
 	case 'pyload/monitor':
 		$controller = 'pyLoadOverlay/monitor.c.php';
+		break;	
+	case 'cam/video':
+		$controller = 'camera/video.c.php';
 		break;
 	case 'admin/debug/var':
 		$controller = 'admin/debug/variables.c.php';
