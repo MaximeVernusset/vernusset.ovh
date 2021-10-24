@@ -46,21 +46,21 @@
         const GB_DIVIDER = Math.pow(2, 30);
         const MAX_DL_SPEED_DATA_RETENTION = 60 * 1000 / FETCH_INTERVAL;
         const MAP_DL_STATUS_CSS_COLOR = {
-            'finished': 'text-success',
-            'online': 'text-info',
-            'queued': 'text-info',
-            'waiting': 'text-info',
-            'starting': 'text-info',
-            'decrypting': 'text-info',
-            'downloading': 'text-info',
-            'processing': 'text-info',
-            'skipped': 'text-warning',
-            'aborted': 'text-warning',
-            'temp. offline': 'text-warning',
-            'failed': 'text-danger',
-            'offline': 'text-danger',
-            'custom': 'text-muted',
-            'unknown': 'text-muted'
+            0: 'text-success',
+            2: 'text-info',
+            3: 'text-info',
+            5: 'text-info',
+            7: 'text-info',
+            10: 'text-info',
+            12: 'text-info',
+            13: 'text-info',
+            4: 'text-warning',
+            9: 'text-warning',
+            6: 'text-warning',
+            8: 'text-danger',
+            1: 'text-danger',
+            11: 'text-muted',
+            14: 'text-muted'
         };
         
         const downloadSpeedChart = new Chart(document.getElementById('download-speed').getContext('2d'), {
@@ -270,7 +270,7 @@
                                     <button class="btn btn-link restart-file pt-0 pb-1 pr-0 pl-0" onclick="startFile(${link.fid}, this)" ${startFileButtonDisabled}><i class="fas fa-redo"></i></button> |
                                     <button class="btn btn-link abort-file pt-0 pb-1 pl-0 pr-0" onclick="deleteFile(${link.fid}, this)"><i class="fas fa-trash-alt"></i></button>
                                     <a href="${link.url}" target="_blank">${link.name}</a>
-                                    <span class="download-status rounded pl-1 pr-1">${(link.size / GB_DIVIDER).toFixed(2)} GB - <span class="${MAP_DL_STATUS_CSS_COLOR[link.statusmsg]}">${link.statusmsg}</span></span>
+                                    <span class="download-status rounded pl-1 pr-1">${(link.size / GB_DIVIDER).toFixed(2)} GB - <span class="${MAP_DL_STATUS_CSS_COLOR[link.status]}">${link.statusmsg}</span></span>
                                 </li>
                             `
                         });
