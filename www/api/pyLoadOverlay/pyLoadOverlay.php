@@ -2,29 +2,32 @@
 require_once __DIR__.'/../api.php';
 
 // pyload APIs: https://github.com/pyload/pyload/wiki/module.Api.Api
-define('API_ABORT_DOWNLOAD', '/api/stopDownloads');
-define('API_ADD_FILES_TO_PACKAGE', '/api/addFiles');
-define('API_ADD_PACKAGE_WITH_NAME', '/api/addPackage');
+define('API_ABORT_DOWNLOAD', '/json/abort_link?id=%s');
+define('API_ADD_FILES_TO_PACKAGE', '/api/add_files/%s');
+define('API_ADD_PACKAGE_WITH_NAME', '/api/add_package');
 define('API_ADD_PACKAGE_WITHOUT_NAME', '/api/generateAndAddPackages');
-define('API_CLEAN_QUEUE', '/api/deleteFinished');
-define('API_DELETE_FILE', '/api/deleteFiles');
+define('API_CLEAN_QUEUE', '/api/delete_finished');
+define('API_DELETE_FILE', '/api/delete_files/[%s]');
 define('API_GET_CURRENT_DOWNLOADS', '/api/statusDownloads');
 define('API_GET_QUEUE', '/api/getQueue');
 define('API_GET_QUEUE_DATA', '/api/getQueueData');
 define('API_GET_SERVER_CONFIG', '/api/getConfig');
 define('API_GET_SERVER_STATUS', '/api/statusServer');
 define('API_LOGIN', '/api/login');
+define('API_MOVE_PACKAGE', '/json/move_package?id=%s&dest=%s');
 define('API_PAUSE_DOWNLOAD', '/api/pauseServer');
-define('API_POST_CONFIG', '/json/save_config/general');
-define('API_RESTART_FILE', '/api/restartFile');
+define('API_POST_CONFIG', '/json/save_config?category=core');
+define('API_RESTART_FILE', '/api/restart_file/%s');
 define('API_START_DOWNLOAD', '/api/unpauseServer');
+define('AUTHENTICATED', 'authenticated');
+define('HEADER_SET_COOKIE', 'Set-Cookie:');
 define('NAME', 'name');
 define('PACKAGE_ID', 'pid');
 define('PACKAGES_IDS', 'packageIds');
 define('PARAM_LIMIT_SPEED', 'download|limit_speed');
 define('PARAM_MAX_DOWNLOADS', 'download|max_downloads');
 define('PARAM_SPEED_LIMIT', 'download|max_speed');
-define('PYLOAD_SESSION', 'pyLoadSession');
+define('PYLOAD_SESSION', 'pyload_session');
 define('SESSION', 'session');
 define('SPLIT_REGEX', '/(\r\n)|\r|\n/');
 define('USERNAME', 'username');
@@ -40,44 +43,72 @@ function internalError() {
 	return false;
 }
 
+function extractPyloadSession($headers) {
+	if (strpos($headers, HEADER_SET_COOKIE) !== false) {
+		$cookie = str_replace(HEADER_SET_COOKIE, '', $headers);
+		$cookieBites = explode(';', $cookie);
+		$pyloadSession = explode('=', $cookieBites[0])[1];
+		$GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION] = $pyloadSession;
+	}
+}
+
+function curlResponseHeadersCallback($curl, $headers) {
+	extractPyloadSession($headers);
+    return strlen($headers);
+}
+
 function loginPyLoad() {
 	if (isset($GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION])) {
 		return $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION];
 	} else {
-		$sessionId = httpPost(getPyLoadConfig(URL).API_LOGIN, array(
+		$pyloadLoginReponse = httpPost(getPyLoadConfig(URL).API_LOGIN, [], array(
 			USERNAME => getPyLoadConfig(USERNAME),
 			PASSWORD => getPyLoadConfig(PASSWORD)
-		));
-		$GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION] = json_decode($sessionId);
-		return !filter_var($sessionId, FILTER_VALIDATE_BOOLEAN);
+		), 'curlResponseHeadersCallback');
+		$response = json_decode($pyloadLoginReponse, true);
+		return isset($response[AUTHENTICATED]) && $response[AUTHENTICATED];
 	}
+}
+
+function buildHeader($name, $value) {
+	return $name.': '.$value;
+}
+
+function buildPyloadSessionCookieHeader() {
+	return buildHeader('Cookie', http_build_query(array(
+		PYLOAD_SESSION => $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION]
+	)));
 }
 
 function postDownloadLinks($links, $packageName = null) {
 	if (loginPyLoad()) {
 		$pyLoadUrl = getPyLoadConfig(URL);
 		$apiToCall = API_ADD_PACKAGE_WITHOUT_NAME;
-		$formData = array(
-			SESSION => $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION]
-		);
+		$needToMovePackageToQueue = true;
+		$headers = [buildPyloadSessionCookieHeader()];
+		$formData = [];
 
 		if ($packageName != null) {
-			$downloadQueue = json_decode(httpPost($pyLoadUrl.API_GET_QUEUE, $formData), true);
+			$downloadQueue = json_decode(httpPost($pyLoadUrl.API_GET_QUEUE, $headers), true);
 			$existingPackageWithSameName = array_filter($downloadQueue, function($package) use ($packageName) {
 				return $package[NAME] == $packageName;
 			});
 			
 			if (count($existingPackageWithSameName) > 0) {
-				$apiToCall = API_ADD_FILES_TO_PACKAGE;
-				$formData[PACKAGE_ID] = array_values($existingPackageWithSameName)[0][PACKAGE_ID];
+				$apiToCall = sprintf(API_ADD_FILES_TO_PACKAGE, array_values($existingPackageWithSameName)[0][PACKAGE_ID]);
 			} else {
 				$apiToCall = API_ADD_PACKAGE_WITH_NAME;
 				$formData[NAME] = '"'.$packageName.'"';
 			}
+			$needToMovePackageToQueue = false;
 		}
 
 		$formData[LINKS] = json_encode($links, JSON_UNESCAPED_SLASHES);
-		return json_decode(httpPost($pyLoadUrl.$apiToCall, $formData));
+		$packageIds = json_decode(httpPost($pyLoadUrl.$apiToCall, $headers, $formData));
+		if ($needToMovePackageToQueue) {
+			movePackageToQueue($packageIds[0]);
+		}
+		return $packageIds;
 	} else {
 		return internalError();
 	}
@@ -85,29 +116,7 @@ function postDownloadLinks($links, $packageName = null) {
 
 function postPyLoadConfig($params = []) {
 	if (loginPyLoad()) {
-		$stringParams = '';
-		foreach ($params as $param => $value) {
-			$stringParams .= $param.'='.$value.'&';
-		}
-		$curl = curl_init();
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => getPyLoadConfig(URL).API_POST_CONFIG,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => HTTP_POST,
-			CURLOPT_POSTFIELDS => $stringParams,
-			CURLOPT_HTTPHEADER => array(
-				'Content-Type: application/x-www-form-urlencoded',
-				'Cookie: beaker.session.id='.$GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION]
-			),
-		));
-		$response = curl_exec($curl);
-		curl_close($curl);
-		return json_decode($response);
+		return json_decode(httpPost(getPyLoadConfig(URL).API_POST_CONFIG, [buildPyloadSessionCookieHeader()], $params), true);
 	} else {
 		return internalError();
 	}
@@ -115,10 +124,14 @@ function postPyLoadConfig($params = []) {
 
 function simpleCommand($apiToCall) {
 	if (loginPyLoad()) {
-		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, array(SESSION => $GLOBALS[CUSTOM_SESSION][PYLOAD_SESSION])), true);
+		return json_decode(httpGet(getPyLoadConfig(URL).$apiToCall, [buildPyloadSessionCookieHeader()]), true);
 	} else {
 		return internalError();
 	}
+}
+
+function movePackageToQueue($packageId) {
+	return simpleCommand(sprintf(API_MOVE_PACKAGE, $packageId, 1));
 }
 
 function getServerStatus() {
@@ -150,15 +163,15 @@ function cleanQueue() {
 }
 
 function abortDownload($fileId) {
-	return simpleCommand(API_ABORT_DOWNLOAD.'?fids=['.$fileId.']');
+	return simpleCommand(sprintf(API_ABORT_DOWNLOAD, $fileId));
 }
 
 function deleteFile($fileId) {
-	return simpleCommand(API_DELETE_FILE.'?fids=['.$fileId.']');
+	return simpleCommand(sprintf(API_DELETE_FILE, $fileId));
 }
 
 function restartFile($fileId) {
-	return simpleCommand(API_RESTART_FILE.'?fid='.$fileId);
+	return simpleCommand(sprintf(API_RESTART_FILE, $fileId));
 }
 
 function getDownloadConfig() {

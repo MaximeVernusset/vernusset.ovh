@@ -12,24 +12,35 @@ $response = array(
 	DATA => []
 );
 
-function httpRequest($method, $url, $data = []) {
-	$options = array(
-		'http' => array(
-			'header'  => 'Content-type: application/x-www-form-urlencoded\r\n',
-			'method'  => $method,
-			'content' => http_build_query($data)
-		)
-	);
-	$context = stream_context_create($options);
-	return file_get_contents($url, false, $context);
+function httpRequest($method, $url, $headers = [], $data = [], $responseHeadersCallback = null) {
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => '',
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => $method,
+		CURLOPT_HTTPHEADER => $headers,
+		CURLOPT_POSTFIELDS => http_build_query($data)
+	));
+	if (null != $responseHeadersCallback) {
+		curl_setopt($curl, CURLOPT_HEADERFUNCTION, $responseHeadersCallback);
+	}
+
+	$response = curl_exec($curl);
+	curl_close($curl);
+	return $response;
 }
 
-function httpPost($url, $data = []) {
-	return httpRequest(HTTP_POST, $url, $data);
+function httpPost($url, $headers = [], $data = [], $responseHeadersCallback = null) {
+	return httpRequest(HTTP_POST, $url, $headers, $data, $responseHeadersCallback);
 }
 
-function httpGet($url, $data = []) {
-	return httpRequest(HTTP_GET, $url, $data);
+function httpGet($url, $headers = [], $data = [], $responseHeadersCallback = null) {
+	return httpRequest(HTTP_GET, $url, $headers, $data, $responseHeadersCallback);
 }
 
 function saveSessionAndReturnResponse($response) {
