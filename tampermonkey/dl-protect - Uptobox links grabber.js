@@ -27,11 +27,12 @@ function accessLinks() {
 
 function collectLinks() {
     const links = [];
-    for (let div of document.getElementsByClassName('urls')) {
-        for (let ul of div.children) {
-            for (let li of ul.getElementsByTagName('li')) {
-                for (let a of li.getElementsByTagName('a')) {
-                    links.push(encodeURI(a.href));
+    for (const div of document.getElementsByClassName('urls')) {
+        for (const ul of div.children) {
+            for (const li of ul.getElementsByTagName('li')) {
+                for (const a of li.getElementsByTagName('a')) {
+                    const link = a.href;
+                    links.push(encodeURI(link.replace('&', '%3F')));
                 }
             }
         }
