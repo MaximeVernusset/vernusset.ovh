@@ -18,6 +18,7 @@ define('API_MOVE_PACKAGE', '/json/move_package?id=%s&dest=%s');
 define('API_PAUSE_DOWNLOAD', '/api/pauseServer');
 define('API_POST_CONFIG', '/json/save_config?category=core');
 define('API_RESTART_FILE', '/api/restart_file/%s');
+define('API_RESTART_SERVER', '/api/restart');
 define('API_START_DOWNLOAD', '/api/unpauseServer');
 define('AUTHENTICATED', 'authenticated');
 define('HEADER_SET_COOKIE', 'Set-Cookie:');
@@ -156,6 +157,10 @@ function startDownload() {
 
 function pauseDownload() {
 	return simpleCommand(API_PAUSE_DOWNLOAD);
+}
+
+function restartServer() {
+	return simpleCommand(API_RESTART_SERVER);
 }
 
 function cleanQueue() {

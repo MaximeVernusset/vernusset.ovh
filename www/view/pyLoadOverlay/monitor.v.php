@@ -10,6 +10,9 @@
                         <button id="play-button" class="btn btn-sm btn-outline-success" onclick="startDownload(this)"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Start queue</button> 
                         <button id="pause-button" class="btn btn-sm btn-outline-warning" onclick="pauseDownload(this)"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Pause queue</button>
                     </div>
+                    <div class="btn-group btn-group-sm mb-1 mr-1" role="group" aria-label="Restart server group">
+                        <button id="restart-button" class="btn btn-sm btn-outline-danger" onclick="restartServer(this)"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Restart server</button>
+                    </div>
                     <div class="btn-group btn-group-sm mb-1 mr-1" role="group" aria-label="Clean queue group">
                         <button class="btn btn-sm btn-outline-info" onclick="cleanQueue(this)"><i class="fa fa-eraser" aria-hidden="true"></i>&nbsp;Clean queue</button>
                     </div>
@@ -40,6 +43,7 @@
 
     <script src="public/vendor/chartjs/2.9.3/Chart.min.js"></script>
     <script>
+        const SERVER_BOOT_TIME = 5000;
         const ENTER_KEYCODE = '13';
         const FETCH_INTERVAL = 1500;
         const MB_DIVIDER = Math.pow(2, 20);
@@ -86,17 +90,16 @@
             }
         });
         
+        let monitorIntervalId, fetchQueueIntervalId;
         let serverStatus;
         let currentDownloads;
-        let speedIntervalId;
         let downloadSpeed = 0;
 
         $(document).ready(() => {
             monitor();
             fetchQueue();
             getDownloadConfig();
-            setInterval(monitor, FETCH_INTERVAL);
-            setInterval(fetchQueue, FETCH_INTERVAL * 1.5);
+            startMonitoringLoop();
             $('#speed-limit').keypress(e => {
                 if (e.keyCode == ENTER_KEYCODE || e.which == ENTER_KEYCODE) {
                     $('#limit-speed-button').click();
@@ -108,6 +111,16 @@
                 }
             });
         });
+
+        function startMonitoringLoop() {
+            monitorIntervalId = setInterval(monitor, FETCH_INTERVAL);
+            fetchQueueIntervalId = setInterval(fetchQueue, FETCH_INTERVAL * 1.5);
+        }
+
+        function stopMonitoringLoop() {
+            clearInterval(monitorIntervalId);
+            clearInterval(fetchQueueIntervalId);
+        }
 
         function monitor() {
             callPyLoadOverlayApi('GET', 'getCurrentDownloads')
@@ -123,14 +136,24 @@
                     downloadSpeed = (serverStatus.speed / MB_DIVIDER).toFixed(2);
                     updateDownloadSpeedChart();
                     if (serverStatus.download) {
-                        $('#play-button').addClass('disabled');
-                        $('#pause-button').removeClass('disabled');
-                    } else {                    
-                        $('#pause-button').addClass('disabled');
-                        $('#play-button').removeClass('disabled');
+                        disableButton('#play-button');
+                        enableButton('#pause-button');
+                    } else {
+                        enableButton('#play-button');
+                        disableButton('#pause-button');
                     }
             });
-        }        
+        }
+
+        function disableButton(button) {
+            $(button).addClass('disabled');
+            $(button).prop('disabled', true);
+        }
+
+        function enableButton(button) {
+            $(button).removeClass('disabled');
+            $(button).prop('disabled', false);
+        }
 
         function callPyLoadOverlayApi(method, apiToCall, params = {}) {
             return callApi(method, `api/pyLoadOverlay/monitor/${apiToCall}/`, params);
@@ -161,8 +184,8 @@
             callPyLoadOverlayApi('POST', 'startDownload')
                 .fail(() => console.log('Failed to start downloading queue'))
                 .done(response => {
-                    $('#play-button').addClass('disabled');
-                    $('#pause-button').removeClass('disabled');
+                    disableButton('#play-button');
+                    enableButton('#pause-button');
                 });
         }
 
@@ -170,25 +193,43 @@
             callPyLoadOverlayApi('POST', 'pauseDownload')
                 .fail(() => console.log('Failed to pause downloading queue'))
                 .done(response => {
-                    $('#pause-button').addClass('disabled');
-                    $('#play-button').removeClass('disabled');
+                    disableButton('#pause-button');
+                    enableButton('#play-button');
                 });
         }
-        
+
+        function restartServer(button) {
+            if (confirm('Restart PyLoad server?')) {
+                const buttonText = $(button).html();
+                disableButton(button);
+                callPyLoadOverlayApi('POST', 'restartServer')
+                    .fail(() => console.log('Failed to restart server'))
+                    .done(response => {
+                        $(button).html(response.message);
+                        stopMonitoringLoop();
+                        setTimeout(() => {
+                            $(button).html(buttonText);
+                            enableButton(button);
+                            startMonitoringLoop();
+                        }, SERVER_BOOT_TIME);
+                    });
+            }
+        }
+
         function cleanQueue(button) {
             const buttonText = $(button).html();
-            $(button).addClass('disabled');
+            disableButton(button);
             callPyLoadOverlayApi('POST', 'cleanQueue')
                 .fail(() => console.log('Failed to clean queue'))
                 .done(response => {
                     $(button).html(response.message);
                     setTimeout(() => {
                         $(button).html(buttonText);
-                        $(button).removeClass('disabled');
+                        enableButton(button);
                     }, FETCH_INTERVAL);
                 });
         }
-        
+
         function limitSpeed(button) {
             const buttonText = $(button).html();
             const downloadSpeedLimit = {speedLimit: $('#speed-limit').val()};
@@ -208,7 +249,7 @@
                     }, FETCH_INTERVAL);
                 });
         }
-        
+
         function setMaxParallelDownloads(button) {
             const buttonText = $(button).html();
             const maxParallelDownloads = {maxParallelDownloads: $('#max-downloads').val()};
