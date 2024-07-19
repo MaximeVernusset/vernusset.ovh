@@ -1,8 +1,5 @@
 <div id="pyLoadOverlay-collector-section">
     <div class="row">
-        <h1>Collector</h1>
-    </div>
-    <div class="row">
         <form id="collector-form" class="w-100">
             <div class="form-group">
                 <input id="<?=PACKAGE_NAME?>" class="form-control" name="<?=PACKAGE_NAME?>" placeholder="Package name" value="<?=$packageName?>">

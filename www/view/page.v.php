@@ -78,7 +78,7 @@
                 </nav>
             </div>
             <div id="layoutSidenav_content">
-                <main class="container-fluid h-100">
+                <main class="container-fluid h-100 pt-2">
 					<?php require_once $view; ?>
                 </main>
                 <footer class="py-4 bg-light mt-auto">

@@ -1,7 +1,4 @@
 <div id="pyLoadOverlay-monitor-section">
-    <div class="row">
-        <h1>Monitor</h1>
-    </div>
     <div id="monitoring">
         <div id="downloads" class="row">
             <div class="col-xl-7 remove-col-padding">
@@ -273,7 +270,7 @@
         function displayCurrentDownloads() {
             $('#current-downloads').html(currentDownloads.reduce((html, currentDownload) => {
                 return `${html}
-                    <div class="download-status rounded mb-2 pb-3 pl-1 pr-1">
+                    <div id="dl-${currentDownload.fid}" class="download-status rounded mb-2 pb-3 pl-1 pr-1">
                         <button class="btn btn-link abort-file pt-0 pb-0" onclick="abortFile(${currentDownload.fid})"><i class="fa fa-times" aria-hidden="true"></i></button>
                         <span class="file-name" data-toggle="tooltip" data-placement="top" title="${currentDownload.packageName}">${currentDownload.name}</span>
                         <div class="progress">
@@ -292,6 +289,7 @@
                 })
                 .done(response => {
                     console.log('File download aborted');
+                    $(`#dl-${fileId}`).remove();
                 });
         }
 
@@ -307,7 +305,7 @@
                             const currentFile = currentDownloads.filter(d => d.fid === link.fid);
                             const startFileButtonDisabled = currentFile && currentFile.length === 1 && currentFile[0].speed > 0 ? 'disabled' : '';
                             links += `
-                                <li>
+                                <li id="link-${link.fid}">
                                     <button class="btn btn-link restart-file pt-0 pb-1 pr-0 pl-0" onclick="startFile(${link.fid}, this)" ${startFileButtonDisabled}><i class="fas fa-redo"></i></button> |
                                     <button class="btn btn-link abort-file pt-0 pb-1 pl-0 pr-0" onclick="deleteFile(${link.fid}, this)"><i class="fas fa-trash-alt"></i></button>
                                     <a href="${link.url}" target="_blank">${link.name}</a>
@@ -345,6 +343,7 @@
                 })
                 .done(response => {
                     console.log('File deleted');
+                    $(`#link-${fileId}`).remove();
                 })
                 .always(() => {
                     setTimeout(() => {

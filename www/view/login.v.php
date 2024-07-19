@@ -6,12 +6,10 @@
                 <div class="card-body">
                     <form id="login-form" method="post">
                         <div class="form-group">
-							<label class="small mb-1" for="<?=USER?>">Username</label>
-							<input type="text" id="<?=USER?>" class="form-control py-4" name="<?=USER?>" placeholder="<?=USER?>" autofocus>
+							<input type="text" id="<?=USER?>" class="form-control py-4" name="<?=USER?>" placeholder="Username" autofocus>
 						</div>
                         <div class="form-group">
-							<label class="small mb-1" for="<?=PASSWORD?>">Password</label>
-							<input type="password" id="<?=PASSWORD?>" class="form-control py-4" name="<?=PASSWORD?>" placeholder="<?=PASSWORD?>">
+							<input type="password" id="<?=PASSWORD?>" class="form-control py-4" name="<?=PASSWORD?>" placeholder="Password">
 						</div>
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
