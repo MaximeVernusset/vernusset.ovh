@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         ed-protect - Uptobox links grabber
+// @name         ed-protect - links grabber
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  Grab uptobox links from ed-protect.org and redirect to vernusset.ovh collector page
+// @description  Grab uptobox/1fichier links from ed-protect.org and redirect to vernusset.ovh collector page
 // @author       Maxime Vernusset
 // @match        https://ed-protect.org/*
 // @grant        none
