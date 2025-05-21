@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         zt-protect - Uptobox links grabber
+// @name         zt-protect - links grabber
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  Grab uptobox links from zt-protect.com and redirect to downloadLinks generator service
+// @description  Grab uptobox/1fichier links from zt-protect.com and redirect to downloadLinks generator service
 // @author       You
 // @match        https://zt-protect.com/*
 // @grant        none
