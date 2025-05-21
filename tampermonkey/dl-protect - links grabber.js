@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name         dl-protect - Uptobox links grabber
+// @name         dl-protect - links grabber
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  Grab uptobox links from dl-protect.link and redirect to vernusset.ovh collector page
+// @description  Grab uptobox/1fichier links from dl-protect.link and redirect to vernusset.ovh collector page
 // @author       Maxime Vernusset
 // @match        https://dl-protect.link/*
 // @grant        none
 // ==/UserScript==
 
-const uptoboxLinksGeneratorUrl = 'http://vernusset.ovh/index.php?action=pyload/collect';
+const collectorUrl = 'http://vernusset.ovh/index.php?action=pyload/collect';
 
 function clickSubmitButton() {
     const button = document.getElementById('subButton');
@@ -19,7 +19,7 @@ function clickSubmitButton() {
 
 function accessLinks() {
     const observer = new MutationObserver(function() {
-        //this.disconnect();
+        this.disconnect();
         clickSubmitButton();
     });
     observer.observe(document.getElementsByTagName('body')[0], { attributes: false, childList: true });
@@ -41,7 +41,12 @@ function collectLinks() {
 }
 
 function collectTitle() {
-    return document.getElementsByTagName('h3')[0].textContent;
+    try {
+        return document.getElementsByTagName('h3')[0].textContent;
+    } catch (e) {
+        console.error(e);
+    }
+    return '';
 }
 
 (function() {
@@ -50,6 +55,6 @@ function collectTitle() {
     const links = collectLinks();
     const title = collectTitle();
     if (links.length > 0) {
-        document.location=encodeURI(`${uptoboxLinksGeneratorUrl}&links=${JSON.stringify(links)}&name=${title}`);
+        document.location=encodeURI(`${collectorUrl}&links=${JSON.stringify(links)}&name=${title}`);
     }
 })();
